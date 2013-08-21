@@ -13,6 +13,8 @@ Source0:	https://github.com/dotcloud/docker/archive/v%{version}.tar.gz
 # Source0-md5:	ff7b814574bbaf9e55dfe1c266ae991e
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang
+Requires:	lxc
+Requires:	uname(release) >= 3.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
