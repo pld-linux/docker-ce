@@ -50,6 +50,7 @@ unset GIT_DIR
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/var/lib/docker/{containers,graph,volumes}}
 install -p bin/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
+ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
 cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 %clean
@@ -59,6 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
 %attr(755,root,root) %{_bindir}/lxc-docker
+%attr(755,root,root) %{_bindir}/docker
 %{_mandir}/man1/lxc-docker.1*
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/containers
