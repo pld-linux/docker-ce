@@ -19,6 +19,9 @@ Requires:	lxc
 Requires:	uname(release) >= 3.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+# binary stripped or something
+%define		_enable_debug_packages 0
+
 %description
 Docker complements LXC with a high-level API which operates at the
 process level. It runs unix processes with strong guarantees of
