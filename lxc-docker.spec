@@ -34,7 +34,7 @@ systems, private PaaS, service-oriented architectures, etc.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/var/lib/docker/{containers,graph,volumes}}
 install -p bin/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
 cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -46,3 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
 %attr(755,root,root) %{_bindir}/lxc-docker
 %{_mandir}/man1/lxc-docker.1*
+%dir %attr(700,root,root) /var/lib/docker
+%dir %attr(700,root,root) /var/lib/docker/containers
+%dir %attr(700,root,root) /var/lib/docker/graph
+%dir %attr(700,root,root) /var/lib/docker/volumes
