@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_with	tests		# build without tests
+#
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
 Version:	0.6.0
@@ -79,6 +83,10 @@ mv go.net .gopath/src/code.google.com/p/go.net
 unset GIT_WORK_TREE
 unset GIT_DIR
 %{__make} VERBOSE=1
+
+%if %{with tests}
+%{__make} test
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
