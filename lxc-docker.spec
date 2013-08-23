@@ -20,12 +20,13 @@ Source4:	https://github.com/dotcloud/tar/archive/master.tar.gz?/tar.tgz
 Source5:	go.net.tar.bz2
 # Source5-md5:	c8fd9d068430ddfa42d28d4772260eda
 URL:		http://github.com/dotcloud/docker
-BuildRequires:	git-core
 BuildRequires:	golang >= 1.1
 Requires:	iptables
 Requires:	lxc
 Requires:	uname(release) >= 3.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		bash_compdir	%{_datadir}/bash-completion/completions
 
 # binary stripped or something
 %define		_enable_debug_packages 0
@@ -38,6 +39,22 @@ isolation and repeatability across servers.
 Docker is a great building block for automating distributed systems:
 large-scale web deployments, database clusters, continuous deployment
 systems, private PaaS, service-oriented architectures, etc.
+
+%package -n bash-completion-lxc-docker
+Summary:	bash-completion for Docker
+Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla Dockera
+Group:		Applications/Shells
+Requires:	%{name}
+Requires:	bash-completion >= 2.0
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n bash-completion-lxc-docker
+This package provides bash-completion for Docker.
+
+%description -n bash-completion-lxc-docker -l pl.UTF-8
+Pakiet ten dostarcza bashowe uzupełnianie nazw dla Dockera.
 
 %prep
 %setup -q -n docker-%{version} -a1 -a2 -a3 -a4 -a5
@@ -70,6 +87,11 @@ install -p bin/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
 cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
+# bash completion
+install -d $RPM_BUILD_ROOT%{bash_compdir}
+cp -p contrib/docker.bash $RPM_BUILD_ROOT%{bash_compdir}/lxc-docker
+ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -83,3 +105,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(700,root,root) /var/lib/docker/containers
 %dir %attr(700,root,root) /var/lib/docker/graph
 %dir %attr(700,root,root) /var/lib/docker/volumes
+
+%files -n bash-completion-lxc-docker
+%defattr(644,root,root,755)
+%{bash_compdir}/lxc-docker
+%{bash_compdir}/docker
