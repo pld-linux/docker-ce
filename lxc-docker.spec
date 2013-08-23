@@ -15,6 +15,7 @@ Source3:	https://github.com/kr/pty/archive/master.tar.gz?/kr-pty.tgz
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	git-core
 BuildRequires:	golang >= 1.1
+Requires:	iptables
 Requires:	lxc
 Requires:	uname(release) >= 3.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
