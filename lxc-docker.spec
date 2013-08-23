@@ -1,7 +1,7 @@
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
 Version:	0.5.3
-Release:	0.1
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}.tar.gz
