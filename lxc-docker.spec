@@ -1,15 +1,15 @@
 #
 # Conditional build:
 %bcond_with	tests		# build without tests
-#
+
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
-Version:	0.6.0
+Version:	0.6.1
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}.tar.gz
-# Source0-md5:	1aedc1fcbb743cd44330a54334db221e
+# Source0-md5:	487262eae6627971e9181886d65fae1a
 Source100:	https://raw.github.com/dotcloud/docker/v0.5.3/Makefile
 # Source100-md5:	44cc86a37fc5dfe59596076d346da20d
 Source1:	https://github.com/gorilla/context/archive/master.tar.gz?/gorilla-context.tgz
@@ -17,7 +17,7 @@ Source1:	https://github.com/gorilla/context/archive/master.tar.gz?/gorilla-conte
 Source2:	https://github.com/gorilla/mux/archive/master.tar.gz?/gorilla-mux.tgz
 # Source2-md5:	e908c7da6b4b8b61b4733d4a348f015c
 Source3:	https://github.com/kr/pty/archive/master.tar.gz?/kr-pty.tgz
-# Source3-md5:        ffdcacc582c7b6404e71c2dce638869e
+# Source3-md5:	ffdcacc582c7b6404e71c2dce638869e
 Source4:	https://github.com/dotcloud/tar/archive/master.tar.gz?/tar.tgz
 # Source4-md5:	7458ecaa777e56d124b61638d597b37f
 # $ PKG=code.google.com/p/go.net/ REV=84a4013f96e0; hg clone http://$PKG go.net && cd go.net && hg checkout $REV && cd .. && tar -cjf go.net.tar.gz2 --exclude-vcs go.net
