@@ -27,7 +27,9 @@ URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1
 Requires:	iptables
 Requires:	lxc
+Requires:	tar
 Requires:	uname(release) >= 3.8
+Requires:	xz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
