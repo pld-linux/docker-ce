@@ -23,6 +23,7 @@ Source4:	https://github.com/dotcloud/tar/archive/master.tar.gz?/tar.tgz
 # $ PKG=code.google.com/p/go.net/ REV=84a4013f96e0; hg clone http://$PKG go.net && cd go.net && hg checkout $REV && cd .. && tar -cjf go.net.tar.gz2 --exclude-vcs go.net
 Source5:	go.net.tar.bz2
 # Source5-md5:	c8fd9d068430ddfa42d28d4772260eda
+Patch0:	bash-comp-2.patch
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1
 Requires:	iptables
@@ -65,6 +66,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla Dockera.
 %prep
 %setup -q -n docker-%{version} -a1 -a2 -a3 -a4 -a5
 cp -p %{SOURCE100} .
+%patch0 -p1
 
 # handle external deps offline, these are taken from Dockerfile
 install -d .gopath/src/github.com/{gorilla,kr,dotcloud}

@@ -1,0 +1,20 @@
+--- docker-0.6.1/contrib/docker.bash~	2013-08-24 01:23:30.000000000 +0300
++++ docker-0.6.1/contrib/docker.bash	2013-08-28 10:03:57.739906253 +0300
+@@ -10,6 +10,8 @@
+ #
+ # To enable the completions either:
+ #  - place this file in /etc/bash_completion.d
++#  or for bash-completions 2.0
++#  - place this file in /usr/share/bash-completion/completions
+ #  or
+ #  - copy this file and add the line below to your .bashrc after
+ #    bash completion features are loaded
+@@ -21,7 +23,7 @@
+ # If the docker daemon is using a unix socket for communication your user
+ # must have access to the socket for the completions to function correctly
+ 
+-have docker && {
++_have docker && {
+ __docker_containers_all()
+ {
+ 	local containers
