@@ -5,7 +5,7 @@
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
 Version:	0.6.1
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}.tar.gz
@@ -23,7 +23,7 @@ Source4:	https://github.com/dotcloud/tar/archive/master.tar.gz?/tar.tgz
 # $ PKG=code.google.com/p/go.net/ REV=84a4013f96e0; hg clone http://$PKG go.net && cd go.net && hg checkout $REV && cd .. && tar -cjf go.net.tar.gz2 --exclude-vcs go.net
 Source5:	go.net.tar.bz2
 # Source5-md5:	c8fd9d068430ddfa42d28d4772260eda
-Patch0:	bash-comp-2.patch
+Patch0:		bash-comp-2.patch
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1
 Requires:	iptables
@@ -31,6 +31,10 @@ Requires:	lxc
 Requires:	tar
 Requires:	uname(release) >= 3.8
 Requires:	xz
+# only runs on x64 hosts for now:
+# https://github.com/dotcloud/docker/issues/136
+# https://github.com/dotcloud/docker/issues/611
+ExclusiveArch	%{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
