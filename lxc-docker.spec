@@ -5,7 +5,7 @@
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
 Version:	0.6.1
-Release:	2
+Release:	3
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}.tar.gz
@@ -23,18 +23,22 @@ Source4:	https://github.com/dotcloud/tar/archive/master.tar.gz?/tar.tgz
 # $ PKG=code.google.com/p/go.net/ REV=84a4013f96e0; hg clone http://$PKG go.net && cd go.net && hg checkout $REV && cd .. && tar -cjf go.net.tar.gz2 --exclude-vcs go.net
 Source5:	go.net.tar.bz2
 # Source5-md5:	c8fd9d068430ddfa42d28d4772260eda
+Source6:	%{name}.init
 Patch0:		bash-comp-2.patch
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1
+BuildRequires:	rpmbuild(macros) >= 1.228
 Requires:	iptables
 Requires:	lxc
+Requires:	rc-scripts >= 0.4.0.10
 Requires:	tar
 Requires:	uname(release) >= 3.8
 Requires:	xz
+Requires(post,preun):	/sbin/chkconfig
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
 # https://github.com/dotcloud/docker/issues/611
-ExclusiveArch	%{x8664}
+ExclusiveArch:	%{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
@@ -98,8 +102,9 @@ unset GIT_DIR
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/var/lib/docker/{containers,graph,volumes}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,/var/lib/docker/{containers,graph,volumes}}
 install -p bin/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
+install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
 cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -108,12 +113,23 @@ install -d $RPM_BUILD_ROOT%{bash_compdir}
 cp -p contrib/docker.bash $RPM_BUILD_ROOT%{bash_compdir}/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
 
+%post
+/sbin/chkconfig --add %{name}
+%service -n %{name} restart
+
+%preun
+if [ "$1" = "0" ]; then
+	%service -q %{name} stop
+	/sbin/chkconfig --del %{name}
+fi
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
 %doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
+%attr(754,root,root) /etc/rc.d/init.d/lxc-docker
 %attr(755,root,root) %{_bindir}/lxc-docker
 %attr(755,root,root) %{_bindir}/docker
 %{_mandir}/man1/lxc-docker.1*
