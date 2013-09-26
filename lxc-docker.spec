@@ -4,12 +4,12 @@
 
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
-Version:	0.6.2
+Version:	0.6.3
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
-# Source0-md5:	41df68b4b4f1e03ab1d0964f4b73f440
+# Source0-md5:	7926f24106b4299ffbb669d42fd7e375
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1.2
