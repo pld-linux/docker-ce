@@ -10,8 +10,6 @@ License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
 # Source0-md5:	41df68b4b4f1e03ab1d0964f4b73f440
-Source100:	https://raw.github.com/dotcloud/docker/v0.5.3/Makefile
-# Source100-md5:	44cc86a37fc5dfe59596076d346da20d
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1.2
@@ -65,22 +63,20 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla Dockera.
 
 %prep
 %setup -q -n docker-%{version}
-cp -p %{SOURCE100} .
+
+install -d vendor/src/github.com/dotcloud
+ln -s $(pwd) vendor/src/github.com/dotcloud/docker
 
 %build
-# avoid interfering with builder env
-unset GIT_WORK_TREE
-unset GIT_DIR
-%{__make} VERBOSE=1
-
-%if %{with tests}
-%{__make} test
-%endif
+export GOPATH=$(pwd)/vendor
+install -d build
+cd build
+go build -v -a github.com/dotcloud/docker/docker
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,/var/lib/docker/{containers,graph,volumes}}
-install -p bin/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
+install -p build/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
 cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
