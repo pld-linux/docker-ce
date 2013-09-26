@@ -28,13 +28,17 @@ Patch0:		bash-comp-2.patch
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1
 BuildRequires:	rpmbuild(macros) >= 1.228
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
 Requires:	iptables
 Requires:	lxc
 Requires:	rc-scripts >= 0.4.0.10
 Requires:	tar
 Requires:	uname(release) >= 3.8
 Requires:	xz
-Requires(post,preun):	/sbin/chkconfig
+Provides:	group(docker)
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
 # https://github.com/dotcloud/docker/issues/611
@@ -113,6 +117,9 @@ install -d $RPM_BUILD_ROOT%{bash_compdir}
 cp -p contrib/docker.bash $RPM_BUILD_ROOT%{bash_compdir}/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
 
+%pre
+%groupadd -g 296 docker
+
 %post
 /sbin/chkconfig --add %{name}
 %service -n %{name} restart
@@ -121,6 +128,11 @@ ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
 if [ "$1" = "0" ]; then
 	%service -q %{name} stop
 	/sbin/chkconfig --del %{name}
+fi
+
+%postun
+if [ "$1" = "0" ]; then
+	%groupremove docker
 fi
 
 %clean
