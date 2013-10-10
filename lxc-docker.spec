@@ -5,7 +5,7 @@
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
 Version:	0.6.3
-Release:	2
+Release:	3
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
@@ -72,7 +72,7 @@ export GOPATH=$(pwd)/vendor
 install -d build
 cd build
 VERSION=%{version}
-GITCOMMIT=%{release} # use RPM_PACKAGE_RELEASE for this
+GITCOMMIT=pld-%{release} # use RPM_PACKAGE_RELEASE for this
 # Use these flags when compiling the tests and final binary
 # without '-d', as that fails now
 LDFLAGS="-X main.GITCOMMIT $GITCOMMIT -X main.VERSION $VERSION -w"
