@@ -4,12 +4,12 @@
 
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
-Version:	0.6.3
-Release:	3
+Version:	0.6.4
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
-# Source0-md5:	7926f24106b4299ffbb669d42fd7e375
+# Source0-md5:	c70bb4f56ef1fee069964a5f8c7c26f9
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	golang >= 1.1.2
@@ -32,6 +32,7 @@ ExclusiveArch:	%{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
+%define		_vimdatadir		%{_datadir}/vim
 
 # binary stripped or something
 %define		_enable_debug_packages 0
@@ -45,7 +46,7 @@ Docker is a great building block for automating distributed systems:
 large-scale web deployments, database clusters, continuous deployment
 systems, private PaaS, service-oriented architectures, etc.
 
-%package -n bash-completion-lxc-docker
+%package -n bash-completion-%{name}
 Summary:	bash-completion for Docker
 Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla Dockera
 Group:		Applications/Shells
@@ -60,6 +61,18 @@ This package provides bash-completion for Docker.
 
 %description -n bash-completion-lxc-docker -l pl.UTF-8
 Pakiet ten dostarcza bashowe uzupełnianie nazw dla Dockera.
+
+%package -n vim-syntax-%{name}
+Summary:	Vim syntax: Docker
+Group:		Applications/Editors/Vim
+Requires:	%{name} = %{version}-%{release}
+Requires:	vim-rt >= 4:7.2.170
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n vim-syntax-%{name}
+This plugin provides syntax highlighting in Dockerfile.
 
 %prep
 %setup -q -n docker-%{version}
@@ -84,12 +97,17 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,/var/lib/
 install -p build/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
-cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
+#cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # bash completion
 install -d $RPM_BUILD_ROOT%{bash_compdir}
-cp -p contrib/docker.bash $RPM_BUILD_ROOT%{bash_compdir}/lxc-docker
+cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
+
+# vim syntax
+install -d $RPM_BUILD_ROOT%{_vimdatadir}
+cp -a contrib/vim-syntax/* $RPM_BUILD_ROOT%{_vimdatadir}
+%{__rm} $RPM_BUILD_ROOT%{_vimdatadir}/{LICENSE,README.md}
 
 %pre
 %groupadd -g 296 docker
@@ -118,13 +136,20 @@ rm -rf $RPM_BUILD_ROOT
 %attr(754,root,root) /etc/rc.d/init.d/lxc-docker
 %attr(755,root,root) %{_bindir}/lxc-docker
 %attr(755,root,root) %{_bindir}/docker
-%{_mandir}/man1/lxc-docker.1*
+#%{_mandir}/man1/lxc-docker.1*
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/containers
 %dir %attr(700,root,root) /var/lib/docker/graph
 %dir %attr(700,root,root) /var/lib/docker/volumes
 
-%files -n bash-completion-lxc-docker
+%files -n bash-completion-%{name}
 %defattr(644,root,root,755)
 %{bash_compdir}/lxc-docker
 %{bash_compdir}/docker
+
+%files -n vim-syntax-%{name}
+%defattr(644,root,root,755)
+%doc contrib/vim-syntax/{README.md,LICENSE}
+%{_vimdatadir}/doc/dockerfile.txt
+%{_vimdatadir}/ftdetect/dockerfile.vim
+%{_vimdatadir}/syntax/dockerfile.vim
