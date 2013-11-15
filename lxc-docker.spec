@@ -18,13 +18,16 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
+Requires:	iproute2 >= 3.5
 Requires:	iptables
-Requires:	lxc
+Requires:	lxc >= 0.8
 Requires:	rc-scripts >= 0.4.0.10
-Requires:	tar
+Requires:	tar >= 1:1.26
 Requires:	uname(release) >= 3.8
 Requires:	xz
+Suggests:	git-core >= 1.7
 Suggests:	libcgroup
+Suggests:	xz >= 1:4.9
 Provides:	group(docker)
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
