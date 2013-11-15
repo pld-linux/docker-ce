@@ -1,11 +1,13 @@
 #!/bin/sh
 #
-# Linux container runtime
+# Create lightweight, portable, self-sufficient containers.
 #
 # chkconfig:	345 10 90
 #
-# description:	Linux container runtime
-#
+# description:	Docker is an open-source project to easily create lightweight, portable, \
+#  self-sufficient containers from any application. The same container that a \
+#  developer builds and tests on a laptop can run at scale, in production, on \
+#  VMs, bare metal, OpenStack clusters, public clouds and more. \
 # processname:	docker
 # pidfile: /var/run/docker.pid
 #
