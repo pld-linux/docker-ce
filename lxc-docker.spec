@@ -24,6 +24,7 @@ Requires:	rc-scripts >= 0.4.0.10
 Requires:	tar
 Requires:	uname(release) >= 3.8
 Requires:	xz
+Suggests:	libcgroup
 Provides:	group(docker)
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
