@@ -12,10 +12,10 @@ Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version
 # Source0-md5:	bc5e2aa1fbcd3ab8fac1a4f6a4613a16
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
+BuildRequires:	device-mapper-devel
 BuildRequires:	golang >= 1.1.2
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sqlite3-devel >= 3.7.9
-BuildRequires:  device-mapper-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
@@ -96,11 +96,13 @@ GITCOMMIT=pld-%{release} # use RPM_PACKAGE_RELEASE for this
 # without '-d', as that fails now
 LDFLAGS="-X main.GITCOMMIT $GITCOMMIT -X main.VERSION $VERSION -w"
 go build -v -ldflags "$LDFLAGS" -a github.com/dotcloud/docker/docker
+go build -v -ldflags "$LDFLAGS" -a ../dockerinit/dockerinit.go
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,/var/lib/docker/{containers,graph,volumes}}
 install -p build/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
+install -p build/dockerinit $RPM_BUILD_ROOT%{_bindir}/dockerinit
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
@@ -142,6 +144,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(754,root,root) /etc/rc.d/init.d/lxc-docker
 %attr(755,root,root) %{_bindir}/lxc-docker
 %attr(755,root,root) %{_bindir}/docker
+%attr(755,root,root) %{_bindir}/dockerinit
 #%{_mandir}/man1/lxc-docker.1*
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/containers
