@@ -31,6 +31,7 @@ Suggests:	git-core >= 1.7
 Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
 Provides:	group(docker)
+Patch0: lxc-docker-nosha.patch
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
 # https://github.com/dotcloud/docker/issues/611
@@ -82,6 +83,7 @@ This plugin provides syntax highlighting in Dockerfile.
 
 %prep
 %setup -q -n docker-%{version}
+%patch0 -p1
 
 install -d vendor/src/github.com/dotcloud
 ln -s $(pwd) vendor/src/github.com/dotcloud/docker
