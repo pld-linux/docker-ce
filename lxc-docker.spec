@@ -32,7 +32,7 @@ Suggests:	git-core >= 1.7
 Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
 Provides:	group(docker)
-Patch0: lxc-docker-nosha.patch
+Patch0:		%{name}-nosha.patch
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
 # https://github.com/dotcloud/docker/issues/611
