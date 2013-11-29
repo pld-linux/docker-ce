@@ -145,7 +145,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
-%attr(644,root,root) %{systemdunitdir}/lxc-docker.service
+%{systemdunitdir}/lxc-docker.service
 %attr(754,root,root) /etc/rc.d/init.d/lxc-docker
 %attr(755,root,root) %{_bindir}/lxc-docker
 %attr(755,root,root) %{_bindir}/docker
