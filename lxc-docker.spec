@@ -10,6 +10,7 @@ License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
 # Source0-md5:	bc5e2aa1fbcd3ab8fac1a4f6a4613a16
+Source5:	%{name}.service
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
 BuildRequires:	device-mapper-devel
@@ -102,9 +103,10 @@ go build -v -ldflags "$LDFLAGS" -a ../dockerinit/dockerinit.go
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,/var/lib/docker/{containers,graph,volumes}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,%{systemdunitdir},/var/lib/docker/{containers,graph,volumes}}
 install -p build/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
 install -p build/dockerinit $RPM_BUILD_ROOT%{_bindir}/dockerinit
+install -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}/lxc-docker.service
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/lxc-docker
 ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
@@ -143,6 +145,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
+%attr(644,root,root) %{systemdunitdir}/lxc-docker.service
 %attr(754,root,root) /etc/rc.d/init.d/lxc-docker
 %attr(755,root,root) %{_bindir}/lxc-docker
 %attr(755,root,root) %{_bindir}/docker
