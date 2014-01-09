@@ -4,12 +4,12 @@
 
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
-Version:	0.7.0
+Version:	0.7.5
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
-# Source0-md5:	bc5e2aa1fbcd3ab8fac1a4f6a4613a16
+# Source0-md5:	d3caed273f5c54f8fee6cf133449ac9a
 Source5:	%{name}.service
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
@@ -118,7 +118,7 @@ ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
 
 # vim syntax
 install -d $RPM_BUILD_ROOT%{_vimdatadir}
-cp -a contrib/vim-syntax/* $RPM_BUILD_ROOT%{_vimdatadir}
+cp -a contrib/syntax/vim/* $RPM_BUILD_ROOT%{_vimdatadir}
 %{__rm} $RPM_BUILD_ROOT%{_vimdatadir}/{LICENSE,README.md}
 
 %pre
@@ -163,7 +163,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n vim-syntax-%{name}
 %defattr(644,root,root,755)
-%doc contrib/vim-syntax/{README.md,LICENSE}
+%doc contrib/syntax/vim/{README.md,LICENSE}
 %{_vimdatadir}/doc/dockerfile.txt
 %{_vimdatadir}/ftdetect/dockerfile.vim
 %{_vimdatadir}/syntax/dockerfile.vim
