@@ -2,7 +2,7 @@
 #
 # Create lightweight, portable, self-sufficient containers.
 #
-# chkconfig:	345 10 90
+# chkconfig:	345 20 80
 #
 # description:	Docker is an open-source project to easily create lightweight, portable, \
 #  self-sufficient containers from any application. The same container that a \
