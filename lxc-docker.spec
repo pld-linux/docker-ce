@@ -4,15 +4,16 @@
 
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
-Version:	0.7.5
+Version:	0.8.1
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
-# Source0-md5:	d3caed273f5c54f8fee6cf133449ac9a
+# Source0-md5:	3e74f5af4a74f3448a1db5763e455eb9
 Source5:	%{name}.service
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
+BuildRequires:	btrfs-progs-devel
 BuildRequires:	device-mapper-devel
 BuildRequires:	golang >= 1.1.2
 BuildRequires:	rpmbuild(macros) >= 1.228
