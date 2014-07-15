@@ -4,12 +4,12 @@
 
 Summary:	Docker: the Linux container engine
 Name:		lxc-docker
-Version:	0.9.0
+Version:	1.1.1
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
-# Source0-md5:	5969bb91ec4f17aa381831046fb15531
+# Source0-md5:	2f1fad2a1c696a46bad6823a43897a6c
 Source5:	%{name}.service
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
@@ -98,7 +98,7 @@ VERSION=%{version}
 GITCOMMIT=pld-%{version}-%{release} # use RPM_PACKAGE_RELEASE for this
 # Use these flags when compiling the tests and final binary
 # without '-d', as that fails now
-LDFLAGS="-X main.GITCOMMIT $GITCOMMIT -X main.VERSION $VERSION -w"
+LDFLAGS="-X github.com/dotcloud/docker/dockerversion.GITCOMMIT $GITCOMMIT -X github.com/dotcloud/docker/dockerversion.VERSION $VERSION -w"
 go build -v -ldflags "$LDFLAGS" -a github.com/dotcloud/docker/docker
 go build -v -ldflags "$LDFLAGS" -a ../dockerinit/dockerinit.go
 
