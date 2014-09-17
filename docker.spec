@@ -3,12 +3,12 @@
 %bcond_with	tests		# build without tests
 
 Summary:	Docker: the Linux container engine
-Name:		lxc-docker
+Name:		docker
 Version:	1.1.1
-Release:	1
+Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
-Source0:	https://github.com/dotcloud/docker/archive/v%{version}/docker-%{version}.tar.gz
+Source0:	https://github.com/dotcloud/docker/archive/v%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	2f1fad2a1c696a46bad6823a43897a6c
 Source5:	%{name}.service
 Source6:	%{name}.init
@@ -33,7 +33,8 @@ Suggests:	git-core >= 1.7
 Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
 Provides:	group(docker)
-Patch0:		%{name}-nosha.patch
+Obsoletes:	lxc-docker < 1.1.1
+Patch0:		lxc-%{name}-nosha.patch
 # only runs on x64 hosts for now:
 # https://github.com/dotcloud/docker/issues/136
 # https://github.com/dotcloud/docker/issues/611
@@ -61,14 +62,15 @@ Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla Dockera
 Group:		Applications/Shells
 Requires:	%{name}
 Requires:	bash-completion >= 2.0
+Obsoletes:	bash-completion-lxc-docker < 1.1.1
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
 
-%description -n bash-completion-lxc-docker
+%description -n bash-completion-%{name}
 This package provides bash-completion for Docker.
 
-%description -n bash-completion-lxc-docker -l pl.UTF-8
+%description -n bash-completion-%{name} -l pl.UTF-8
 Pakiet ten dostarcza bashowe uzupełnianie nazw dla Dockera.
 
 %package -n vim-syntax-%{name}
@@ -76,6 +78,7 @@ Summary:	Vim syntax: Docker
 Group:		Applications/Editors/Vim
 Requires:	%{name} = %{version}-%{release}
 Requires:	vim-rt >= 4:7.2.170
+Obsoletes:	vim-syntax-lxc-docker < 1.1.1
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
@@ -84,7 +87,7 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q -n docker-%{version}
+%setup -q
 %patch0 -p1
 
 install -d vendor/src/github.com/dotcloud
@@ -105,17 +108,15 @@ go build -v -ldflags "$LDFLAGS" -a ../dockerinit/dockerinit.go
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,%{systemdunitdir},/var/lib/docker/{containers,graph,volumes}}
-install -p build/docker $RPM_BUILD_ROOT%{_bindir}/lxc-docker
+install -p build/docker $RPM_BUILD_ROOT%{_bindir}/docker
 install -p build/dockerinit $RPM_BUILD_ROOT%{_bindir}/dockerinit
-install -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}/lxc-docker.service
-install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/lxc-docker
-ln -s lxc-docker $RPM_BUILD_ROOT%{_bindir}/docker
+install -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
+install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # bash completion
 install -d $RPM_BUILD_ROOT%{bash_compdir}
-cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/lxc-docker
-ln -s lxc-docker $RPM_BUILD_ROOT%{bash_compdir}/docker
+cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/docker
 
 # vim syntax
 install -d $RPM_BUILD_ROOT%{_vimdatadir}
@@ -146,9 +147,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
-%{systemdunitdir}/lxc-docker.service
-%attr(754,root,root) /etc/rc.d/init.d/lxc-docker
-%attr(755,root,root) %{_bindir}/lxc-docker
+%{systemdunitdir}/docker.service
+%attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
 %attr(755,root,root) %{_bindir}/dockerinit
 #%{_mandir}/man1/lxc-docker.1*
@@ -159,7 +159,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n bash-completion-%{name}
 %defattr(644,root,root,755)
-%{bash_compdir}/lxc-docker
 %{bash_compdir}/docker
 
 %files -n vim-syntax-%{name}

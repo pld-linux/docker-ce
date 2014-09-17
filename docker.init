@@ -21,7 +21,7 @@
 # Check that networking is up.
 if is_yes "${NETWORKING}"; then
 	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
-		msg_network_down "LXC Docker"
+		msg_network_down "Docker"
 		exit 1
 	fi
 else
@@ -29,38 +29,38 @@ else
 fi
 
 # Get service config - may override defaults
-[ -f /etc/sysconfig/lxc-docker ] && . /etc/sysconfig/lxc-docker
+[ -f /etc/sysconfig/docker ] && . /etc/sysconfig/docker
 
 pidfile="/var/run/docker.pid"
 
 start() {
 	# Check if the service is already running?
-	if [ -f /var/lock/subsys/lxc-docker ]; then
-		msg_already_running "LXC Docker"
+	if [ -f /var/lock/subsys/docker ]; then
+		msg_already_running "Docker"
 		return
 	fi
 
-	msg_starting "LXC Docker"
+	msg_starting "Docker"
 	daemon --fork /usr/bin/docker -d
 	RETVAL=$?
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/lxc-docker
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/docker
 }
 
 stop() {
-	if [ ! -f /var/lock/subsys/lxc-docker ]; then
-		msg_not_running "LXC Docker"
+	if [ ! -f /var/lock/subsys/docker ]; then
+		msg_not_running "Docker"
 		return
 	fi
 
 	# Stop daemons.
-	msg_stopping "LXC Docker"
+	msg_stopping "Docker"
 	killproc --pidfile $pidfile docker -TERM
-	rm -f /var/lock/subsys/lxc-docker
+	rm -f /var/lock/subsys/docker
 }
 
 condrestart() {
-	if [ ! -f /var/lock/subsys/lxc-docker ]; then
-		msg_not_running "LXC Docker"
+	if [ ! -f /var/lock/subsys/docker ]; then
+		msg_not_running "Docker"
 		RETVAL=$1
 		return
 	fi
@@ -89,7 +89,7 @@ case "$1" in
 	condrestart 7
 	;;
   status)
-	status --pidfile $pidfile lxc-docker docker
+	status --pidfile $pidfile docker docker
 	RETVAL=$?
 	;;
   *)
