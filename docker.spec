@@ -5,7 +5,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.3.3
-Release:	0.1
+Release:	0.2
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -104,25 +104,23 @@ ln -s $(pwd) vendor/src/github.com/docker/docker
 
 %build
 export GOPATH=$(pwd)/vendor
-install -d build
-cd build
-DOCKER_PKG="github.com/docker/docker"
-VERSION=%{version}
-GITCOMMIT=pld-%{version}-%{release} # use RPM_PACKAGE_RELEASE for this
-# Use these flags when compiling the tests and final binary
-# without '-d', as that fails now
-LDFLAGS="-X $DOCKER_PKG/dockerversion.GITCOMMIT $GITCOMMIT -X $DOCKER_PKG/dockerversion.VERSION $VERSION -w"
-go build -v -ldflags "$LDFLAGS" -a github.com/docker/docker/docker
-go build -v -ldflags "$LDFLAGS" -a ../dockerinit/dockerinit.go
+export DOCKER_GITCOMMIT="pld/%{version}"
+
+DEBUG=1 hack/make.sh dynbinary
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,%{systemdunitdir},/var/lib/docker/{containers,graph,volumes}}
-install -p build/docker $RPM_BUILD_ROOT%{_bindir}/docker
-install -p build/dockerinit $RPM_BUILD_ROOT%{_bindir}/dockerinit
-install -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
+
+install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
+install -p bundles/%{version}/dynbinary/dockerinit-%{version} $RPM_BUILD_ROOT%{_bindir}/dockerinit
+cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
+
+# install udev rules
+install -d $RPM_BUILD_ROOT/lib/udev/rules.d
+cp -p contrib/udev/80-docker.rules $RPM_BUILD_ROOT/lib/udev/rules.d
 
 # bash completion
 install -d $RPM_BUILD_ROOT%{bash_compdir}
@@ -161,6 +159,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
 %attr(755,root,root) %{_bindir}/dockerinit
+/lib/udev/rules.d/80-docker.rules
 #%{_mandir}/man1/lxc-docker.1*
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/containers
