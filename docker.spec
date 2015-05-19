@@ -2,20 +2,20 @@
 # Conditional build:
 %bcond_with	tests		# build without tests
 
-Summary:	Docker: the Linux container engine
+Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.1.2
+Version:	1.3.3
 Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
-Source0:	https://github.com/dotcloud/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	2e02d5288ecd6cbd9a6c3e4fd3b81ffc
+Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	3fdcb25a498961f6eb14a9c1d81e9244
 Source5:	%{name}.service
 Source6:	%{name}.init
-URL:		http://github.com/dotcloud/docker
+URL:		https://github.com/docker/docker
 BuildRequires:	btrfs-progs-devel
 BuildRequires:	device-mapper-devel
-BuildRequires:	golang >= 1.2.1
+BuildRequires:	golang >= 1.3.1
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sqlite3-devel >= 3.7.9
 Requires(post,preun):	/sbin/chkconfig
@@ -36,8 +36,8 @@ Provides:	group(docker)
 Obsoletes:	lxc-docker < 1.1.1
 Patch0:		lxc-%{name}-nosha.patch
 # only runs on x64 hosts for now:
-# https://github.com/dotcloud/docker/issues/136
-# https://github.com/dotcloud/docker/issues/611
+# https://github.com/docker/docker/issues/136
+# https://github.com/docker/docker/issues/611
 ExclusiveArch:	%{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -48,13 +48,22 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_enable_debug_packages 0
 
 %description
-Docker complements LXC with a high-level API which operates at the
-process level. It runs unix processes with strong guarantees of
-isolation and repeatability across servers.
+Docker is an open source project to pack, ship and run any application
+as a lightweight container
 
-Docker is a great building block for automating distributed systems:
-large-scale web deployments, database clusters, continuous deployment
-systems, private PaaS, service-oriented architectures, etc.
+Docker containers are both hardware-agnostic and platform-agnostic.
+This means that they can run anywhere, from your laptop to the largest
+EC2 compute instance and everything in between - and they don't
+require that you use a particular language, framework or packaging
+system. That makes them great building blocks for deploying and
+scaling web apps, databases and backend services without depending on
+a particular stack or provider.
+
+Docker is an open-source implementation of the deployment engine which
+powers dotCloud, a popular Platform-as-a-Service. It benefits directly
+from the experience accumulated over several years of large-scale
+operation and support of hundreds of thousands of applications and
+databases.
 
 %package -n bash-completion-%{name}
 Summary:	bash-completion for Docker
@@ -90,19 +99,20 @@ This plugin provides syntax highlighting in Dockerfile.
 %setup -q
 %patch0 -p1
 
-install -d vendor/src/github.com/dotcloud
-ln -s $(pwd) vendor/src/github.com/dotcloud/docker
+install -d vendor/src/github.com/docker
+ln -s $(pwd) vendor/src/github.com/docker/docker
 
 %build
 export GOPATH=$(pwd)/vendor
 install -d build
 cd build
+DOCKER_PKG="github.com/docker/docker"
 VERSION=%{version}
 GITCOMMIT=pld-%{version}-%{release} # use RPM_PACKAGE_RELEASE for this
 # Use these flags when compiling the tests and final binary
 # without '-d', as that fails now
-LDFLAGS="-X github.com/dotcloud/docker/dockerversion.GITCOMMIT $GITCOMMIT -X github.com/dotcloud/docker/dockerversion.VERSION $VERSION -w"
-go build -v -ldflags "$LDFLAGS" -a github.com/dotcloud/docker/docker
+LDFLAGS="-X $DOCKER_PKG/dockerversion.GITCOMMIT $GITCOMMIT -X $DOCKER_PKG/dockerversion.VERSION $VERSION -w"
+go build -v -ldflags "$LDFLAGS" -a github.com/docker/docker/docker
 go build -v -ldflags "$LDFLAGS" -a ../dockerinit/dockerinit.go
 
 %install
@@ -146,7 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md CHANGELOG.md CONTRIBUTING.md FIXME LICENSE AUTHORS NOTICE MAINTAINERS
+%doc README.md CHANGELOG.md CONTRIBUTING.md LICENSE AUTHORS NOTICE MAINTAINERS
 %{systemdunitdir}/docker.service
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
