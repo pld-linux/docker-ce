@@ -4,12 +4,12 @@
 
 Summary:	Docker: the Linux container engine
 Name:		docker
-Version:	1.1.1
+Version:	1.1.2
 Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/dotcloud/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	2f1fad2a1c696a46bad6823a43897a6c
+# Source0-md5:	2e02d5288ecd6cbd9a6c3e4fd3b81ffc
 Source5:	%{name}.service
 Source6:	%{name}.init
 URL:		http://github.com/dotcloud/docker
