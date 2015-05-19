@@ -5,7 +5,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.3.3
-Release:	0.2
+Release:	0.4
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -110,7 +110,8 @@ DEBUG=1 hack/make.sh dynbinary
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,%{systemdunitdir},/var/lib/docker/{containers,graph,volumes}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,%{systemdunitdir}} \
+	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,init,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
 install -p bundles/%{version}/dynbinary/dockerinit-%{version} $RPM_BUILD_ROOT%{_bindir}/dockerinit
@@ -161,9 +162,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/dockerinit
 /lib/udev/rules.d/80-docker.rules
 #%{_mandir}/man1/lxc-docker.1*
+
 %dir %attr(700,root,root) /var/lib/docker
+%dir %attr(700,root,root) /var/lib/docker/aufs
 %dir %attr(700,root,root) /var/lib/docker/containers
+%dir %attr(700,root,root) /var/lib/docker/execdriver
 %dir %attr(700,root,root) /var/lib/docker/graph
+%dir %attr(700,root,root) /var/lib/docker/init
+%dir %attr(700,root,root) /var/lib/docker/tmp
+%dir %attr(700,root,root) /var/lib/docker/trust
+%dir %attr(700,root,root) /var/lib/docker/vfs
 %dir %attr(700,root,root) /var/lib/docker/volumes
 
 %files -n bash-completion-%{name}
