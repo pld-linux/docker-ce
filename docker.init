@@ -54,7 +54,7 @@ stop() {
 
 	# Stop daemons.
 	msg_stopping "Docker"
-	killproc --pidfile $pidfile docker -TERM
+	killproc --pidfile $pidfile docker
 	rm -f /var/lock/subsys/docker
 }
 
