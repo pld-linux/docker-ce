@@ -1,0 +1,7 @@
+# Customized settings for Docker
+
+# Define nice level for docker
+SERVICE_RUN_NICE_LEVEL="+0"
+
+# Modify these options if you want to change the way the docker daemon runs
+#OPTIONS=""

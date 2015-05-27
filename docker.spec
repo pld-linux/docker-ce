@@ -12,6 +12,7 @@ Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}
 # Source0-md5:	3fdcb25a498961f6eb14a9c1d81e9244
 Source5:	%{name}.service
 Source6:	%{name}.init
+Source7:	%{name}.sysconfig
 URL:		https://github.com/docker/docker
 BuildRequires:	btrfs-progs-devel
 BuildRequires:	device-mapper-devel
@@ -109,13 +110,14 @@ DEBUG=1 hack/make.sh dynbinary
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/rc.d/init.d,%{systemdunitdir}} \
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
 	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,init,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
 install -p bundles/%{version}/dynbinary/dockerinit-%{version} $RPM_BUILD_ROOT%{_bindir}/dockerinit
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
+cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # install udev rules
@@ -155,10 +157,11 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.md CHANGELOG.md CONTRIBUTING.md LICENSE AUTHORS NOTICE MAINTAINERS
-%{systemdunitdir}/docker.service
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
 %attr(755,root,root) %{_bindir}/dockerinit
+%{systemdunitdir}/docker.service
 /lib/udev/rules.d/80-docker.rules
 #%{_mandir}/man1/lxc-docker.1*
 
