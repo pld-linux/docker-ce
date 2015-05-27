@@ -5,7 +5,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.3.3
-Release:	0.4
+Release:	0.5
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -24,7 +24,6 @@ Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	iproute2 >= 3.5
 Requires:	iptables
-Requires:	lxc >= 0.8
 Requires:	rc-scripts >= 0.4.0.10
 Requires:	tar >= 1:1.26
 Requires:	uname(release) >= 3.8
