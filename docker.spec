@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_with	tests		# build without tests
+%bcond_with	vim			# build vim syntax package
 
 Summary:	Docker: the open-source application container engine
 Name:		docker
@@ -129,9 +130,11 @@ install -d $RPM_BUILD_ROOT%{bash_compdir}
 cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/docker
 
 # vim syntax
+%if %{with vim}
 install -d $RPM_BUILD_ROOT%{_vimdatadir}
 cp -a contrib/syntax/vim/* $RPM_BUILD_ROOT%{_vimdatadir}
 %{__rm} $RPM_BUILD_ROOT%{_vimdatadir}/{LICENSE,README.md}
+%endif
 
 %pre
 %groupadd -g 296 docker
@@ -180,9 +183,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{bash_compdir}/docker
 
+%if %{with vim}
 %files -n vim-syntax-%{name}
 %defattr(644,root,root,755)
 %doc contrib/syntax/vim/{README.md,LICENSE}
 %{_vimdatadir}/doc/dockerfile.txt
 %{_vimdatadir}/ftdetect/dockerfile.vim
 %{_vimdatadir}/syntax/dockerfile.vim
+%endif
