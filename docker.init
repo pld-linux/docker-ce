@@ -44,7 +44,9 @@ start() {
 	# https://github.com/docker/docker/issues/2758
 
 	msg_starting "Docker"
-	daemon --fork /usr/bin/docker daemon $OPTIONS
+	daemon --fork --pidfile $pidfile --waitfortime 60 \
+		/usr/bin/docker daemon $OPTIONS
+
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/docker
 }
