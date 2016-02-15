@@ -3,5 +3,8 @@
 # Define nice level for docker
 SERVICE_RUN_NICE_LEVEL="+0"
 
+# Setup bigger Max open files and Max processes
+SERVICE_LIMITS="-n 1048576 -u 1048576"
+
 # Modify these options if you want to change the way the docker daemon runs
 #OPTIONS=""
