@@ -40,6 +40,9 @@ start() {
 		return
 	fi
 
+	# NOTE: docker daemon actually doesn't go to background, need to do that ourselves
+	# https://github.com/docker/docker/issues/2758
+
 	msg_starting "Docker"
 	daemon --fork /usr/bin/docker daemon $OPTIONS
 	RETVAL=$?
