@@ -28,6 +28,8 @@ else
 	exit 0
 fi
 
+DOCKER_LOGFILE=/var/log/docker.log
+
 # Get service config - may override defaults
 [ -f /etc/sysconfig/docker ] && . /etc/sysconfig/docker
 
@@ -44,8 +46,11 @@ start() {
 	# https://github.com/docker/docker/issues/2758
 
 	msg_starting "Docker"
-	daemon --fork --pidfile $pidfile --waitfortime 60 \
-		/usr/bin/docker daemon $OPTIONS
+
+	export DOCKER_LOGFILE
+	daemon \
+		--fork --pidfile $pidfile --waitfortime 60 \
+		/usr/lib/docker daemon $OPTIONS
 
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/docker

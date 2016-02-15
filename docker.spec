@@ -9,11 +9,12 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.10.1
-Release:	0.1
+Release:	0.2
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	19f027d937069b104dfb0a4a01f2e30f
+Source1:	%{name}.sh
 Source5:	%{name}.service
 Source6:	%{name}.init
 Source7:	%{name}.sysconfig
@@ -48,6 +49,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
 %define		_vimdatadir		%{_datadir}/vim
+%define		_libexecdir		%{_prefix}/lib
 
 # binary stripped or something
 %define		_enable_debug_packages 0
@@ -116,12 +118,14 @@ DEBUG=1 hack/make.sh dynbinary
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
+	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,init,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
 install -p bundles/%{version}/dynbinary/dockerinit-%{version} $RPM_BUILD_ROOT%{_bindir}/dockerinit
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
+install -p %{SOURCE1} $RPM_BUILD_ROOT%{_libexecdir}/docker
 cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -168,6 +172,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
 %attr(755,root,root) %{_bindir}/dockerinit
+%attr(755,root,root) %{_libexecdir}/docker
 %{systemdunitdir}/docker.service
 /lib/udev/rules.d/80-docker.rules
 #%{_mandir}/man1/lxc-docker.1*
