@@ -41,7 +41,7 @@ start() {
 	fi
 
 	msg_starting "Docker"
-	daemon --fork /usr/bin/docker -d $OPTIONS
+	daemon --fork /usr/bin/docker daemon $OPTIONS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/docker
 }
