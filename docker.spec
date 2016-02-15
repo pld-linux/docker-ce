@@ -3,6 +3,9 @@
 %bcond_with	tests		# build without tests
 %bcond_with	vim			# build vim syntax package
 
+# NOTES
+# https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
+
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.10.1
@@ -15,9 +18,10 @@ Source5:	%{name}.service
 Source6:	%{name}.init
 Source7:	%{name}.sysconfig
 URL:		https://github.com/docker/docker
-BuildRequires:	btrfs-progs-devel
-BuildRequires:	device-mapper-devel
-BuildRequires:	golang >= 1.3.1
+BuildRequires:	btrfs-progs-devel >= 3.16.1
+BuildRequires:	device-mapper-devel >= 2.02.89
+BuildRequires:	golang >= 1.4
+BuildRequires:	libseccomp-devel >= 2.2.1
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sqlite3-devel >= 3.7.9
 Requires(post,preun):	/sbin/chkconfig
