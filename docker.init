@@ -47,6 +47,9 @@ start() {
 
 	msg_starting "Docker"
 
+	touch "$DOCKER_LOGFILE"
+	chgrp docker "$DOCKER_LOGFILE"
+
 	export DOCKER_LOGFILE
 	daemon \
 		--fork --pidfile $pidfile --waitfortime 60 \
