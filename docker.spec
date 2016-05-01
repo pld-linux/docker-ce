@@ -113,7 +113,7 @@ ln -s $(pwd) vendor/src/github.com/docker/docker
 export GOPATH=$(pwd)/vendor
 export DOCKER_GITCOMMIT="pld/%{version}"
 
-DEBUG=1 hack/make.sh dynbinary
+bash -x hack/make.sh dynbinary
 
 %install
 rm -rf $RPM_BUILD_ROOT
