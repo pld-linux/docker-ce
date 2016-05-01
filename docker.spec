@@ -8,12 +8,12 @@
 
 Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.10.3
-Release:	1
+Version:	1.11.1
+Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	34da67232c13c0bcc1bba8980151174d
+# Source0-md5:	ec0e32e8ce9e05cc0f2de7a439c1b3ca
 Source1:	%{name}.sh
 Source5:	%{name}.service
 Source6:	%{name}.init
@@ -104,7 +104,7 @@ This plugin provides syntax highlighting in Dockerfile.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1 why is this patch needed?
 
 install -d vendor/src/github.com/docker
 ln -s $(pwd) vendor/src/github.com/docker/docker
@@ -122,7 +122,6 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfi
 	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,init,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
-install -p bundles/%{version}/dynbinary/dockerinit-%{version} $RPM_BUILD_ROOT%{_bindir}/dockerinit
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 install -p %{SOURCE1} $RPM_BUILD_ROOT%{_libexecdir}/docker
@@ -171,7 +170,6 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
-%attr(755,root,root) %{_bindir}/dockerinit
 %attr(755,root,root) %{_libexecdir}/docker
 %{systemdunitdir}/docker.service
 /lib/udev/rules.d/80-docker.rules
