@@ -7,15 +7,23 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
+# v0.1.1
+%define	runc_commit baf6536
+# v0.2.2
+%define	containerd_commit 9dc2b32
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.11.2
-Release:	0.1
+Release:	0.8
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	ada4a756f71886049ad793cab8787de8
-Source1:	%{name}.sh
+Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
+# Source1-md5:	b6b2f2e5722666e7d1a1d5062ff996e3
+Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
+# Source2-md5:	76c1e68052b35a3dcfbc6d76d61f17cd
+Source4:	%{name}.sh
 Source5:	%{name}.service
 Source6:	%{name}.init
 Source7:	%{name}.sysconfig
@@ -104,15 +112,30 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q
+%setup -q -a1 -a2
 #%patch0 -p1 why is this patch needed?
+
+mv runc-%{runc_commit}* runc
+mv containerd-%{containerd_commit}* containerd
 
 install -d vendor/src/github.com/docker
 ln -s $(pwd) vendor/src/github.com/docker/docker
+ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
 
 %build
-export GOPATH=$(pwd)/vendor
+v=$(awk '/ENV RUNC_COMMIT/ {print $3}' Dockerfile)
+echo "$v" | grep "^%{runc_commit}"
+v=$(awk '/ENV CONTAINERD_COMMIT/ {print $3}' Dockerfile)
+echo "$v" | grep "^%{containerd_commit}"
+
+export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
 export DOCKER_GITCOMMIT="pld/%{version}"
+
+# build docker-runc
+%{__make} -C runc
+
+# build docker-containerd
+%{__make} -C containerd
 
 bash -x hack/make.sh dynbinary
 %if %{with doc}
@@ -121,14 +144,23 @@ man/md2man-all.sh
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
 	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,image,init,network,overlay,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
+
+# install docker-runc
+install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
+
+# install docker-containerd
+install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-containerd
+install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
+install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-ctr
+
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
-install -p %{SOURCE1} $RPM_BUILD_ROOT%{_libexecdir}/docker
+install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/docker
 cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/docker
 #cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -174,10 +206,15 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
+%attr(755,root,root) %{_sbindir}/docker-runc
+%attr(755,root,root) %{_sbindir}/docker-containerd
+%attr(755,root,root) %{_sbindir}/docker-containerd-shim
+%attr(755,root,root) %{_sbindir}/docker-ctr
 %attr(755,root,root) %{_libexecdir}/docker
 %{systemdunitdir}/docker.service
 /lib/udev/rules.d/80-docker.rules
 #%{_mandir}/man1/lxc-docker.1*
+
 
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/aufs
