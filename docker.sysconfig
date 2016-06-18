@@ -8,3 +8,6 @@ SERVICE_LIMITS="-n 1048576 -u 1048576"
 
 # Modify these options if you want to change the way the docker daemon runs
 #OPTIONS=""
+
+# Use overlay storage driver
+#OPTIONS="$OPTIONS --storage-driver=overlay"
