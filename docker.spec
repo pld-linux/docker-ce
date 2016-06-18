@@ -9,12 +9,12 @@
 
 Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.11.1
+Version:	1.11.2
 Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	ec0e32e8ce9e05cc0f2de7a439c1b3ca
+# Source0-md5:	ada4a756f71886049ad793cab8787de8
 Source1:	%{name}.sh
 Source5:	%{name}.service
 Source6:	%{name}.init
