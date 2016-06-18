@@ -123,7 +123,7 @@ man/md2man-all.sh
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
 	$RPM_BUILD_ROOT%{_libexecdir} \
-	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,init,tmp,trust,vfs,volumes}
+	$RPM_BUILD_ROOT/var/lib/docker/{aufs,containers,execdriver,graph,image,init,network,overlay,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
@@ -184,7 +184,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(700,root,root) /var/lib/docker/containers
 %dir %attr(700,root,root) /var/lib/docker/execdriver
 %dir %attr(700,root,root) /var/lib/docker/graph
+%dir %attr(700,root,root) /var/lib/docker/image
 %dir %attr(700,root,root) /var/lib/docker/init
+%dir %attr(700,root,root) /var/lib/docker/network
+%dir %attr(700,root,root) /var/lib/docker/overlay
 %dir %attr(700,root,root) /var/lib/docker/tmp
 %dir %attr(700,root,root) /var/lib/docker/trust
 %dir %attr(700,root,root) /var/lib/docker/vfs
