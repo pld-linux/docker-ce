@@ -49,7 +49,6 @@ Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
 Provides:	group(docker)
 Obsoletes:	lxc-docker < 1.1.1
-Patch0:		lxc-%{name}-nosha.patch
 # only runs on x64 hosts for now:
 # https://github.com/docker/docker/issues/136
 # https://github.com/docker/docker/issues/611
@@ -113,7 +112,6 @@ This plugin provides syntax highlighting in Dockerfile.
 
 %prep
 %setup -q -a1 -a2
-#%patch0 -p1 why is this patch needed?
 
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
