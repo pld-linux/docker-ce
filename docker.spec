@@ -2,6 +2,7 @@
 # Conditional build:
 %bcond_with	tests		# build without tests
 %bcond_with	vim			# build vim syntax package
+%bcond_with	doc			# build manual pages
 
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
@@ -114,6 +115,9 @@ export GOPATH=$(pwd)/vendor
 export DOCKER_GITCOMMIT="pld/%{version}"
 
 bash -x hack/make.sh dynbinary
+%if %{with doc}
+man/md2man-all.sh
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
