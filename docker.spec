@@ -7,22 +7,23 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v0.1.1
-%define	runc_commit baf6536
-# v0.2.2
-%define	containerd_commit 9dc2b32
+# v1.0.0-rc1-39-gcc29e3d
+%define	runc_commit cc29e3d
+# v0.2.0-110-g1b3a815
+%define	containerd_commit 1b3a815
+%define	subver -rc4
 Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.11.2
-Release:	1
+Version:	1.12.0
+Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
-Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	ada4a756f71886049ad793cab8787de8
+Source0:	https://github.com/docker/docker/archive/v%{version}%{subver}/%{name}-%{version}.tar.gz
+# Source0-md5:	48aed48d7e349c1cd9d1b053e9eea1d1
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	b6b2f2e5722666e7d1a1d5062ff996e3
+# Source1-md5:	716d0b284ce42490eeb83befba10fafb
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	76c1e68052b35a3dcfbc6d76d61f17cd
+# Source2-md5:	23426c2f489d5cb4dd6123b841e1975f
 Source4:	%{name}.sh
 Source5:	%{name}.service
 Source6:	%{name}.init
@@ -111,7 +112,7 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q -a1 -a2
+%setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2
 
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
@@ -146,7 +147,9 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,tmp,trust,vfs,volumes}
 
-install -p bundles/%{version}/dynbinary/docker-%{version} $RPM_BUILD_ROOT%{_bindir}/docker
+install -p bundles/%{version}%{?subver}/dynbinary-client/docker-%{version}%{?subver} $RPM_BUILD_ROOT%{_bindir}/docker
+install -p bundles/%{version}%{?subver}/dynbinary-daemon/docker-proxy-%{version}%{?subver} $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
+install -p bundles/%{version}%{?subver}/dynbinary-daemon/dockerd-%{version}%{?subver} $RPM_BUILD_ROOT%{_sbindir}/dockerd
 
 # install docker-runc
 install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
@@ -204,10 +207,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
-%attr(755,root,root) %{_sbindir}/docker-runc
 %attr(755,root,root) %{_sbindir}/docker-containerd
 %attr(755,root,root) %{_sbindir}/docker-containerd-shim
 %attr(755,root,root) %{_sbindir}/docker-ctr
+%attr(755,root,root) %{_sbindir}/docker-proxy
+%attr(755,root,root) %{_sbindir}/docker-runc
+%attr(755,root,root) %{_sbindir}/dockerd
 %attr(755,root,root) %{_libexecdir}/docker
 %{systemdunitdir}/docker.service
 /lib/udev/rules.d/80-docker.rules
