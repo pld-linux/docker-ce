@@ -31,7 +31,7 @@ Source8:	%{name}.sysconfig
 URL:		http://www.docker.com/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	device-mapper-devel >= 2.02.89
-BuildRequires:	golang >= 1.4
+BuildRequires:	golang >= 1.6
 BuildRequires:	libseccomp-devel >= 2.2.1
 BuildRequires:	rpmbuild(macros) >= 1.228
 BuildRequires:	sqlite3-devel >= 3.7.9
