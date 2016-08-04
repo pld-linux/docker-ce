@@ -14,7 +14,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.12.0
-Release:	0.2
+Release:	0.3
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -156,7 +156,7 @@ install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
 # install docker-containerd
 install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-containerd
 install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
-install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-ctr
+install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
@@ -207,8 +207,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
 %attr(755,root,root) %{_sbindir}/docker-containerd
+%attr(755,root,root) %{_sbindir}/docker-containerd-ctr
 %attr(755,root,root) %{_sbindir}/docker-containerd-shim
-%attr(755,root,root) %{_sbindir}/docker-ctr
 %attr(755,root,root) %{_sbindir}/docker-proxy
 %attr(755,root,root) %{_sbindir}/docker-runc
 %attr(755,root,root) %{_sbindir}/dockerd
