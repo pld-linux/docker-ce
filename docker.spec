@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	tests		# build without tests
-%bcond_with	vim			# build vim syntax package
+%bcond_with	vim			# build vim syntax package (bundled in vim 7.4.979-2)
 %bcond_with	doc			# build manual pages
 
 # NOTES
@@ -14,7 +14,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.12.0
-Release:	0.3
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -162,7 +162,6 @@ cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/docker
 cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/docker
-#cp -p packaging/debian/lxc-docker.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # install udev rules
 install -d $RPM_BUILD_ROOT/lib/udev/rules.d
@@ -215,8 +214,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/docker
 %{systemdunitdir}/docker.service
 /lib/udev/rules.d/80-docker.rules
-#%{_mandir}/man1/lxc-docker.1*
-
 
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/containers
