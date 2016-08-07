@@ -161,7 +161,7 @@ man/md2man-all.sh
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
 	$RPM_BUILD_ROOT%{_libexecdir} \
-	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,tmp,trust,vfs,volumes}
+	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}%{?subver}/dynbinary-client/docker-%{version}%{?subver} $RPM_BUILD_ROOT%{_bindir}/docker
 install -p bundles/%{version}%{?subver}/dynbinary-daemon/docker-proxy-%{version}%{?subver} $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
@@ -243,6 +243,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(700,root,root) /var/lib/docker/image
 %dir %attr(700,root,root) /var/lib/docker/init
 %dir %attr(700,root,root) /var/lib/docker/network
+%dir %attr(700,root,root) /var/lib/docker/swarm
 %dir %attr(700,root,root) /var/lib/docker/tmp
 %dir %attr(700,root,root) /var/lib/docker/trust
 %dir %attr(700,root,root) /var/lib/docker/vfs
