@@ -14,7 +14,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.12.0
-Release:	2
+Release:	3
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -57,6 +57,7 @@ ExclusiveArch:	%{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
+%define		zsh_compdir	%{_datadir}/zsh/site-functions
 %define		_vimdatadir		%{_datadir}/vim
 %define		_libexecdir		%{_prefix}/lib
 
@@ -97,6 +98,21 @@ This package provides bash-completion for Docker.
 
 %description -n bash-completion-%{name} -l pl.UTF-8
 Pakiet ten dostarcza bashowe uzupełnianie nazw dla Dockera.
+
+%package -n zsh-completion-%{name}
+Summary:	zsh completion for Docker
+Summary(pl.UTF-8):	Uzupełnianie parametrów w zsh dla poleceń Dockera
+Group:		Applications/Shells
+Requires:	%{name}
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n zsh-completion-%{name}
+This package provides zsh completion for Docker.
+
+%description -n zsh-completion-%{name} -l pl.UTF-8
+Pakiet ten dostarcza uzupełnianie w zsh dla poleceń Dockera.
 
 %package -n vim-syntax-%{name}
 Summary:	Vim syntax: Docker
@@ -169,9 +185,11 @@ cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
 install -d $RPM_BUILD_ROOT/lib/udev/rules.d
 cp -p contrib/udev/80-docker.rules $RPM_BUILD_ROOT/lib/udev/rules.d
 
-# bash completion
+# bash and zsh completion
 install -d $RPM_BUILD_ROOT%{bash_compdir}
 cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/docker
+install -d $RPM_BUILD_ROOT%{zsh_compdir}
+cp -p contrib/completion/zsh/_docker $RPM_BUILD_ROOT%{zsh_compdir}
 
 # vim syntax
 %if %{with vim}
@@ -233,6 +251,10 @@ rm -rf $RPM_BUILD_ROOT
 %files -n bash-completion-%{name}
 %defattr(644,root,root,755)
 %{bash_compdir}/docker
+
+%files -n zsh-completion-%{name}
+%defattr(644,root,root,755)
+%{zsh_compdir}/_docker
 
 %if %{with vim}
 %files -n vim-syntax-%{name}
