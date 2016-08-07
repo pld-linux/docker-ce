@@ -1,13 +1,19 @@
 [Unit]
 Description=Docker Application Container Engine
-Documentation=http://docs.docker.io
-Requires=network.target
-After=syslog.target network.target remote-fs.target nss-lookup.target
+Documentation=https://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
 
 [Service]
-Type=simple
-ExecStartPre=/bin/mount --make-rprivate /
-ExecStart=/usr/bin/docker -d
+Type=notify
+ExecStart=/usr/sbin/dockerd -H fd://
+ExecReload=/bin/kill -s HUP $MAINPID
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TimeoutStartSec=0
+Delegate=yes
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target

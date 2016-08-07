@@ -14,7 +14,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.12.0
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Applications/System
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -25,8 +25,9 @@ Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/conta
 # Source2-md5:	f0a0c1101ad259b84fb457c8c7036723
 Source4:	%{name}.sh
 Source5:	%{name}.service
-Source6:	%{name}.init
-Source7:	%{name}.sysconfig
+Source6:	%{name}.socket
+Source7:	%{name}.init
+Source8:	%{name}.sysconfig
 URL:		http://www.docker.com/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	device-mapper-devel >= 2.02.89
@@ -159,9 +160,10 @@ install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-cont
 install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 
 cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
-install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
+cp -p %{SOURCE6} $RPM_BUILD_ROOT%{systemdunitdir}
+install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/docker
-cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/docker
+cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
 
 # install udev rules
 install -d $RPM_BUILD_ROOT/lib/udev/rules.d
@@ -213,6 +215,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/dockerd
 %attr(755,root,root) %{_libexecdir}/docker
 %{systemdunitdir}/docker.service
+%{systemdunitdir}/docker.socket
 /lib/udev/rules.d/80-docker.rules
 
 %dir %attr(700,root,root) /var/lib/docker
