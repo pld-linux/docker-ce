@@ -17,6 +17,7 @@ Version:	1.12.0
 Release:	3
 License:	Apache v2.0
 Group:		Applications/System
+# https://github.com/docker/docker/releases
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	7990440b022e93f3e7036bcfd12970f2
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
@@ -204,17 +205,20 @@ cp -a contrib/syntax/vim/* $RPM_BUILD_ROOT%{_vimdatadir}
 %post
 /sbin/chkconfig --add %{name}
 %service -n %{name} restart
+%systemd_post %{name}.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service -q %{name} stop
 	/sbin/chkconfig --del %{name}
 fi
+%systemd_preun %{name}.service
 
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove docker
 fi
+%systemd_reload
 
 %clean
 rm -rf $RPM_BUILD_ROOT
