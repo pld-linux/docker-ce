@@ -1,4 +1,7 @@
 #
+# TODO
+# - check if need to drop socket activation in pld as well: https://github.com/docker/docker/pull/24804
+#
 # Conditional build:
 %bcond_with	tests		# build without tests
 %bcond_with	vim			# build vim syntax package (bundled in vim 7.4.979-2)
@@ -11,16 +14,16 @@
 %define	runc_commit cc29e3d
 # v0.2.0-125-g0ac3cd1
 %define	containerd_commit 0ac3cd1
-%define	subver -rc2
+#define	subver -rc2
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.12.1
-Release:	0.1
+Release:	0.2
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
-Source0:	https://github.com/docker/docker/archive/v%{version}%{subver}/%{name}-%{version}%{subver}.tar.gz
-# Source0-md5:	adb8bd35ea7cf2991aefc38773da07e9
+Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	7af7b4c25d414aa19bc7382bd85c25f7
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	716d0b284ce42490eeb83befba10fafb
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
