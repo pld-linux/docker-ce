@@ -1,7 +1,4 @@
 #
-# TODO
-# - check if need to drop socket activation in pld as well: https://github.com/docker/docker/pull/24804
-#
 # Conditional build:
 %bcond_with	tests		# build without tests
 %bcond_with	vim			# build vim syntax package (bundled in vim 7.4.979-2)
@@ -18,7 +15,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.12.1
-Release:	0.2
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -29,10 +26,9 @@ Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{ru
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
 # Source2-md5:	f0a0c1101ad259b84fb457c8c7036723
 Source4:	%{name}.sh
-Source5:	%{name}.service
-Source6:	%{name}.socket
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
+Patch0:		systemd.patch
 URL:		http://www.docker.com/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	device-mapper-devel >= 2.02.89
@@ -134,9 +130,9 @@ This plugin provides syntax highlighting in Dockerfile.
 
 %prep
 %setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2
-
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
+%patch0 -p1
 
 install -d vendor/src/github.com/docker
 ln -s $(pwd) vendor/src/github.com/docker/docker
@@ -180,8 +176,8 @@ install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-container
 install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
 install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 
-cp -p %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p %{SOURCE6} $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/docker
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
