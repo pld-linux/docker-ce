@@ -34,7 +34,7 @@ BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	device-mapper-devel >= 2.02.89
 BuildRequires:	golang >= 1.6
 BuildRequires:	libseccomp-devel >= 2.2.1
-BuildRequires:	rpmbuild(macros) >= 1.228
+BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sqlite3-devel >= 3.7.9
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
@@ -43,6 +43,7 @@ Requires(pre):	/usr/sbin/groupadd
 Requires:	iproute2 >= 3.5
 Requires:	iptables
 Requires:	rc-scripts >= 0.4.0.10
+Requires:	systemd-units >= 38
 Requires:	tar >= 1:1.26
 Requires:	uname(release) >= 3.8
 Requires:	xz
