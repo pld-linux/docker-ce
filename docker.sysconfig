@@ -7,6 +7,10 @@ SERVICE_RUN_NICE_LEVEL="+0"
 SERVICE_LIMITS="-n 1048576 -u 1048576"
 
 # Modify these options if you want to change the way the docker daemon runs
+# IMPORTANT:
+# When using systemd, do not use variables in variables:
+#  OPTIONS="$OPTIONS --foo"
+# ... systemd parser does not handle these
 #OPTIONS=""
 
 # Use overlay storage driver
