@@ -1,11 +1,16 @@
---- docker-1.12.1/contrib/init/systemd/docker.service~	2016-08-18 07:40:58.000000000 +0300
-+++ docker-1.12.1/contrib/init/systemd/docker.service	2016-08-30 00:06:51.450800482 +0300
-@@ -9,7 +9,7 @@
+--- docker-1.12.1/contrib/init/systemd/docker.service	2016-08-30 00:06:51.450800482 +0300
++++ docker-1.12.1/contrib/init/systemd/docker.service	2016-09-26 21:36:55.000000000 +0300
+@@ -5,11 +5,12 @@
+ Requires=docker.socket
+ 
+ [Service]
++EnvironmentFile=-/etc/sysconfig/docker
+ Type=notify
  # the default is not to use systemd for cgroups because the delegate issues still
  # exists and systemd currently does not support the cgroup feature set required
  # for containers run by docker
 -ExecStart=/usr/bin/dockerd -H fd://
-+ExecStart=/usr/sbin/dockerd -H fd://
++ExecStart=/usr/sbin/dockerd -H fd:// $OPTIONS
  ExecReload=/bin/kill -s HUP $MAINPID
  # Having non-zero Limit*s causes performance problems due to accounting overhead
  # in the kernel. We recommend using cgroups to do container-local accounting.
