@@ -47,6 +47,7 @@ Requires:	systemd-units >= 38
 Requires:	tar >= 1:1.26
 Requires:	uname(release) >= 3.8
 Requires:	xz
+Suggests:	docker-credential-helpers
 Suggests:	git-core >= 1.7
 Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
