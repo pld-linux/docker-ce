@@ -53,7 +53,7 @@ start() {
 	export DOCKER_LOGFILE
 	daemon \
 		--fork --pidfile $pidfile --waitfortime 60 \
-		/usr/lib/docker daemon $OPTIONS
+		/usr/lib/dockerd $OPTIONS
 
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/docker

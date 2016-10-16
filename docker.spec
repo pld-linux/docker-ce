@@ -25,7 +25,7 @@ Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{ru
 # Source1-md5:	f8ab0976c658243c61d7636ebbe4087c
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
 # Source2-md5:	9e7690cc09625bdb34f7a9fedff270eb
-Source4:	%{name}.sh
+Source4:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
 Patch0:		systemd.patch
@@ -181,7 +181,7 @@ install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 cp -p contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
-install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/docker
+install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/dockerd
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
 
 # install udev rules
@@ -237,7 +237,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/docker-proxy
 %attr(755,root,root) %{_sbindir}/docker-runc
 %attr(755,root,root) %{_sbindir}/dockerd
-%attr(755,root,root) %{_libexecdir}/docker
+%attr(755,root,root) %{_libexecdir}/dockerd
 %{systemdunitdir}/docker.service
 %{systemdunitdir}/docker.socket
 /lib/udev/rules.d/80-docker.rules
