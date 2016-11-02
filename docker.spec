@@ -7,24 +7,24 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-6-g02f8fa7
-%define	runc_commit 02f8fa7
-# v0.2.4-6-g0366d7e
-%define	containerd_commit 0366d7e
+# v1.0.0-rc2-8-gf59ba3c
+%define	runc_commit f59ba3c
+# v0.2.4-8-gb818e74
+%define	containerd_commit b818e74
 #define	subver -rc2
 Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.12.2
+Version:	1.12.3
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	019efbcb88c9f76790ca28d990179f6a
-Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	f8ab0976c658243c61d7636ebbe4087c
+# Source0-md5:	40510f377b781c72847ae6a06fdbb175
+Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
+# Source1-md5:	9347487a8e855229bf9ca1a928625223
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	9e7690cc09625bdb34f7a9fedff270eb
+# Source2-md5:	f8c2d3bc4573db5f76d7230131cbebb4
 Source4:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
