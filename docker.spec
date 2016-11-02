@@ -40,6 +40,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
+Requires:	ca-certificates
 Requires:	iproute2 >= 3.5
 Requires:	iptables
 Requires:	rc-scripts >= 0.4.0.10
