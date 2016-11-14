@@ -7,24 +7,24 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-8-gf59ba3c
-%define	runc_commit f59ba3c
-# v0.2.4-8-gb818e74
-%define	containerd_commit b818e74
-#define	subver -rc2
+# v1.0.0-rc2-123-gac031b5
+%define	runc_commit ac031b5
+# v0.2.3-66-g8517738
+%define	containerd_commit 8517738
+%define	subver -rc1
 Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.12.3
-Release:	1
+Version:	1.13.0
+Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
-Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	40510f377b781c72847ae6a06fdbb175
+Source0:	https://github.com/docker/docker/archive/v%{version}%{subver}/%{name}-%{version}%{subver}.tar.gz
+# Source0-md5:	3e40a95c40182314a5c2ba41f5b7d7d2
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	9347487a8e855229bf9ca1a928625223
+# Source1-md5:	5c22c984bb610dbcd57d11c83125f376
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	f8c2d3bc4573db5f76d7230131cbebb4
+# Source2-md5:	f5f0654554164fe3e3433e41955b64f9
 Source4:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
@@ -142,9 +142,9 @@ ln -s $(pwd) vendor/src/github.com/docker/docker
 ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
 
 %build
-v=$(awk '/ENV RUNC_COMMIT/ {print $3}' Dockerfile)
+v=$(awk -F= '/RUNC_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{runc_commit}"
-v=$(awk '/ENV CONTAINERD_COMMIT/ {print $3}' Dockerfile)
+v=$(awk -F= '/CONTAINERD_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{containerd_commit}"
 
 export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
