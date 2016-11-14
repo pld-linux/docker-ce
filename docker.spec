@@ -11,6 +11,8 @@
 %define	runc_commit ac031b5
 # v0.2.3-66-g8517738
 %define	containerd_commit 8517738
+# v0.8.0-dev.2-464-g0f53435
+%define	libnetwork_commit 0f53435
 %define	subver -rc1
 Summary:	Docker: the open-source application container engine
 Name:		docker
@@ -25,6 +27,8 @@ Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commi
 # Source1-md5:	5c22c984bb610dbcd57d11c83125f376
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
 # Source2-md5:	f5f0654554164fe3e3433e41955b64f9
+Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
+# Source3-md5:	7cfbfe76355aae3577c77a6a4b2c92db
 Source4:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
@@ -132,29 +136,37 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2
+%setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2 -a3
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
+mv libnetwork-%{libnetwork_commit}* libnetwork
 %patch0 -p1
 
 install -d vendor/src/github.com/docker
 ln -s $(pwd) vendor/src/github.com/docker/docker
 ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
+ln -s $(pwd)/libnetwork vendor/src/github.com/docker/libnetwork
 
 %build
 v=$(awk -F= '/RUNC_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{runc_commit}"
 v=$(awk -F= '/CONTAINERD_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{containerd_commit}"
+v=$(awk -F= '/LIBNETWORK_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+echo "$v" | grep "^%{libnetwork_commit}"
 
 export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
 export DOCKER_GITCOMMIT="pld/%{version}"
-
 # build docker-runc
 %{__make} -C runc
 
 # build docker-containerd
 %{__make} -C containerd
+
+# build docker-proxy
+go build -ldflags="$PROXY_LDFLAGS" \
+	-o docker-proxy \
+	github.com/docker/libnetwork/cmd/proxy
 
 bash -x hack/make.sh dynbinary
 %if %{with doc}
@@ -168,7 +180,6 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
 install -p bundles/%{version}%{?subver}/dynbinary-client/docker-%{version}%{?subver} $RPM_BUILD_ROOT%{_bindir}/docker
-install -p bundles/%{version}%{?subver}/dynbinary-daemon/docker-proxy-%{version}%{?subver} $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
 install -p bundles/%{version}%{?subver}/dynbinary-daemon/dockerd-%{version}%{?subver} $RPM_BUILD_ROOT%{_sbindir}/dockerd
 
 # install docker-runc
@@ -178,6 +189,9 @@ install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
 install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-containerd
 install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
 install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
+
+# install docker-proxy
+install -p docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
 
 cp -p contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
