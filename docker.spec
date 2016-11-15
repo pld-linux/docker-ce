@@ -17,7 +17,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.13.0
-Release:	0.3
+Release:	0.5
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -35,6 +35,7 @@ Source5:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
 Patch0:		systemd.patch
+Patch1:		init-args.patch
 URL:		http://www.docker.com/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
@@ -145,6 +146,7 @@ mv containerd-%{containerd_commit}* containerd
 mv libnetwork-%{libnetwork_commit}* libnetwork
 mv tini-* tini
 %patch0 -p1
+%patch1 -p1
 
 install -d vendor/src/github.com/docker
 ln -s $(pwd) vendor/src/github.com/docker/docker
@@ -174,7 +176,7 @@ go build -ldflags="$PROXY_LDFLAGS" \
 
 # build docker-init
 cd tini
-cmake -DMINIMAL=ON .
+cmake .
 %{__make}
 cd ..
 
