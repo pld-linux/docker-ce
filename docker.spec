@@ -17,7 +17,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.13.0
-Release:	0.1
+Release:	0.2
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -29,7 +29,9 @@ Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/conta
 # Source2-md5:	f5f0654554164fe3e3433e41955b64f9
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
 # Source3-md5:	7cfbfe76355aae3577c77a6a4b2c92db
-Source4:	%{name}d.sh
+Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
+# Source4-md5:	c29541112a242c53c82bb6b1213f288f
+Source5:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
 Patch0:		systemd.patch
@@ -45,6 +47,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	ca-certificates
+Requires:	cmake
 Requires:	iproute2 >= 3.5
 Requires:	iptables
 Requires:	rc-scripts >= 0.4.0.10
@@ -136,10 +139,11 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2 -a3
+%setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2 -a3 -a4
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
 mv libnetwork-%{libnetwork_commit}* libnetwork
+mv tini-* tini
 %patch0 -p1
 
 install -d vendor/src/github.com/docker
@@ -168,6 +172,12 @@ go build -ldflags="$PROXY_LDFLAGS" \
 	-o docker-proxy \
 	github.com/docker/libnetwork/cmd/proxy
 
+# build docker-init
+cd tini
+cmake -DMINIMAL=ON .
+%{__make}
+cd ..
+
 bash -x hack/make.sh dynbinary
 %if %{with doc}
 man/md2man-all.sh
@@ -193,10 +203,13 @@ install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 # install docker-proxy
 install -p docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
 
+# install docker-init
+install -p tini/tini $RPM_BUILD_ROOT%{_sbindir}/docker-init
+
 cp -p contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
-install -p %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/dockerd
+install -p %{SOURCE5} $RPM_BUILD_ROOT%{_libexecdir}/dockerd
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
 
 # install udev rules
@@ -249,6 +262,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/docker-containerd
 %attr(755,root,root) %{_sbindir}/docker-containerd-ctr
 %attr(755,root,root) %{_sbindir}/docker-containerd-shim
+%attr(755,root,root) %{_sbindir}/docker-init
 %attr(755,root,root) %{_sbindir}/docker-proxy
 %attr(755,root,root) %{_sbindir}/docker-runc
 %attr(755,root,root) %{_sbindir}/dockerd
