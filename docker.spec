@@ -17,7 +17,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.13.0
-Release:	0.2
+Release:	0.3
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -37,6 +37,7 @@ Source8:	%{name}.sysconfig
 Patch0:		systemd.patch
 URL:		http://www.docker.com/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
+BuildRequires:	cmake
 BuildRequires:	device-mapper-devel >= 2.02.89
 BuildRequires:	golang >= 1.6
 BuildRequires:	libseccomp-devel >= 2.2.1
@@ -47,7 +48,6 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	ca-certificates
-Requires:	cmake
 Requires:	iproute2 >= 3.5
 Requires:	iptables
 Requires:	rc-scripts >= 0.4.0.10
