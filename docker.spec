@@ -17,7 +17,7 @@
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.13.0
-Release:	0.5
+Release:	0.6
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -170,7 +170,7 @@ export DOCKER_GITCOMMIT="pld/%{version}"
 %{__make} -C containerd
 
 # build docker-proxy
-go build -ldflags="$PROXY_LDFLAGS" \
+go build -ldflags="-linkmode=external" \
 	-o docker-proxy \
 	github.com/docker/libnetwork/cmd/proxy
 
