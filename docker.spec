@@ -7,26 +7,26 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-123-gac031b5
-%define	runc_commit ac031b5
-# v0.2.3-66-g8517738
-%define	containerd_commit 8517738
+# v1.0.0-rc2-131-g5137186
+%define	runc_commit 5137186
+# v0.2.3-78-g03e5862
+%define	containerd_commit 03e5862
 # v0.8.0-dev.2-464-g0f53435
 %define	libnetwork_commit 0f53435
-%define	subver -rc1
+%define	subver -rc2
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.13.0
-Release:	0.6
+Release:	0.7
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
 Source0:	https://github.com/docker/docker/archive/v%{version}%{subver}/%{name}-%{version}%{subver}.tar.gz
-# Source0-md5:	3e40a95c40182314a5c2ba41f5b7d7d2
+# Source0-md5:	4297b8063bd196add0b9e158451f5d70
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	5c22c984bb610dbcd57d11c83125f376
+# Source1-md5:	05d6f07c81a89b7ef63f79cda8e822ae
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	f5f0654554164fe3e3433e41955b64f9
+# Source2-md5:	72e9315bde0c17f14d8a2fff8e0d2423
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
 # Source3-md5:	7cfbfe76355aae3577c77a6a4b2c92db
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
