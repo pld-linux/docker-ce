@@ -13,16 +13,16 @@
 %define	containerd_commit 03e5862
 # v0.8.0-dev.2-464-g0f53435
 %define	libnetwork_commit 0f53435
-%define	subver -rc7
+#define	subver -rc7
 Summary:	Docker: the open-source application container engine
 Name:		docker
 Version:	1.13.0
-Release:	0.9
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
-Source0:	https://github.com/docker/docker/archive/v%{version}%{subver}/%{name}-%{version}%{subver}.tar.gz
-# Source0-md5:	a98bc10aef6938fba580abd949aff6e3
+Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	23d3875ac67d5b67dd1918c45ba98537
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	ab5b858b721b2fc8b581645eb35e3634
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
