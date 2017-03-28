@@ -7,26 +7,26 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-132-g2f7393a
-%define	runc_commit 2f7393a
-# v0.2.3-78-g03e5862
-%define	containerd_commit 03e5862
+# v1.0.0-rc2-133-g9df8b30
+%define	runc_commit 9df8b30
+# v0.2.3-85-gaa8187d
+%define	containerd_commit aa8187d
 # v0.8.0-dev.2-464-g0f53435
 %define	libnetwork_commit 0f53435
 #define	subver -rc7
 Summary:	Docker: the open-source application container engine
 Name:		docker
-Version:	1.13.0
+Version:	1.13.1
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
 Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	23d3875ac67d5b67dd1918c45ba98537
+# Source0-md5:	032c39b2390a0f387cdb49bab8c4c712
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	ab5b858b721b2fc8b581645eb35e3634
+# Source1-md5:	43ee79eaf575db8a212058c30997e45d
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	72e9315bde0c17f14d8a2fff8e0d2423
+# Source2-md5:	01c58df940b94910996ecb8096fd8b71
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
 # Source3-md5:	7cfbfe76355aae3577c77a6a4b2c92db
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
@@ -35,7 +35,6 @@ Source5:	%{name}d.sh
 Source7:	%{name}.init
 Source8:	%{name}.sysconfig
 Patch0:		systemd.patch
-Patch1:		init-args.patch
 URL:		http://www.docker.com/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
@@ -146,7 +145,6 @@ mv containerd-%{containerd_commit}* containerd
 mv libnetwork-%{libnetwork_commit}* libnetwork
 mv tini-* tini
 %patch0 -p1
-%patch1 -p1
 
 install -d vendor/src/github.com/docker
 ln -s $(pwd) vendor/src/github.com/docker/docker
@@ -154,11 +152,11 @@ ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
 ln -s $(pwd)/libnetwork vendor/src/github.com/docker/libnetwork
 
 %build
-v=$(awk -F= '/RUNC_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^RUNC_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{runc_commit}"
-v=$(awk -F= '/CONTAINERD_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^CONTAINERD_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{containerd_commit}"
-v=$(awk -F= '/LIBNETWORK_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^LIBNETWORK_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
 echo "$v" | grep "^%{libnetwork_commit}"
 
 export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
