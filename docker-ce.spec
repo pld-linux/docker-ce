@@ -4,6 +4,8 @@
 %bcond_with	vim			# build vim syntax package (bundled in vim 7.4.979-2)
 %bcond_with	doc			# build manual pages
 
+# TODO: drop P docker when docker-compose updated to use docker(engine) dep
+
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
@@ -19,7 +21,7 @@ Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
 Version:	17.03.2
-Release:	0.1
+Release:	0.2
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -61,6 +63,8 @@ Suggests:	docker-credential-helpers
 Suggests:	git-core >= 1.7
 Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
+Provides:	docker = %{version}
+Provides:	docker(engine) = %{version}
 Provides:	group(docker)
 Obsoletes:	docker < 17.0
 Obsoletes:	lxc-docker < 1.1.1
