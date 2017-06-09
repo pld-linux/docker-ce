@@ -7,35 +7,37 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-133-g9df8b30
-%define	runc_commit 9df8b30
-# v0.2.3-85-gaa8187d
-%define	containerd_commit aa8187d
+# v1.0.0-rc2-136-g54296cf4
+%define	runc_commit 54296cf
+# v0.2.6
+%define	containerd_commit 4ab9917
 # v0.8.0-dev.2-464-g0f53435
 %define	libnetwork_commit 0f53435
 #define	subver -rc7
-Summary:	Docker: the open-source application container engine
-Name:		docker
-Version:	1.13.1
-Release:	1
+Summary:	Docker CE: the open-source application container engine
+Name:		docker-ce
+# Using Docker-CE, Stay on Stable channel
+# https://docs.docker.com/engine/installation/
+Version:	17.03.1
+Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
-Source0:	https://github.com/docker/docker/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	032c39b2390a0f387cdb49bab8c4c712
+Source0:	https://github.com/docker/docker/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
+# Source0-md5:	e9692eaf80c78fcc860643e3468c6c76
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	43ee79eaf575db8a212058c30997e45d
+# Source1-md5:	c4eff71ea7da80d25f7cece171683a03
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	01c58df940b94910996ecb8096fd8b71
+# Source2-md5:	37dae1d17f530c2c7f7a35d3bf0977a4
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
 # Source3-md5:	7cfbfe76355aae3577c77a6a4b2c92db
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
 # Source4-md5:	c29541112a242c53c82bb6b1213f288f
-Source5:	%{name}d.sh
-Source7:	%{name}.init
-Source8:	%{name}.sysconfig
+Source5:	dockerd.sh
+Source7:	docker.init
+Source8:	docker.sysconfig
 Patch0:		systemd.patch
-URL:		http://www.docker.com/
+URL:		https://www.docker.com/community-edition/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
 BuildRequires:	device-mapper-devel >= 2.02.89
@@ -61,6 +63,7 @@ Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
 Provides:	group(docker)
 Obsoletes:	lxc-docker < 1.1.1
+Conflicts:	docker
 # only runs on x64 hosts for now:
 # https://github.com/docker/docker/issues/136
 # https://github.com/docker/docker/issues/611
@@ -139,7 +142,7 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2 -a3 -a4
+%setup -q -n moby-%{version}-ce %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2 -a3 -a4
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
 mv libnetwork-%{libnetwork_commit}* libnetwork
@@ -189,8 +192,8 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
-install -p bundles/%{version}%{?subver}/dynbinary-client/docker-%{version}%{?subver} $RPM_BUILD_ROOT%{_bindir}/docker
-install -p bundles/%{version}%{?subver}/dynbinary-daemon/dockerd-%{version}%{?subver} $RPM_BUILD_ROOT%{_sbindir}/dockerd
+install -p bundles/latest/dynbinary-client/docker $RPM_BUILD_ROOT%{_bindir}/docker
+install -p bundles/latest/dynbinary-daemon/dockerd $RPM_BUILD_ROOT%{_sbindir}/dockerd
 
 # install docker-runc
 install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
@@ -233,16 +236,16 @@ cp -a contrib/syntax/vim/* $RPM_BUILD_ROOT%{_vimdatadir}
 %groupadd -g 296 docker
 
 %post
-/sbin/chkconfig --add %{name}
-%service -n %{name} restart
-%systemd_post %{name}.service
+/sbin/chkconfig --add docker
+%service -n docker restart
+%systemd_post docker.service
 
 %preun
 if [ "$1" = "0" ]; then
-	%service -q %{name} stop
-	/sbin/chkconfig --del %{name}
+	%service -q docker stop
+	/sbin/chkconfig --del docker
 fi
-%systemd_preun %{name}.service
+%systemd_preun docker.service
 
 %postun
 if [ "$1" = "0" ]; then
