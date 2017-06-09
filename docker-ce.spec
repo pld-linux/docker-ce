@@ -13,18 +13,18 @@
 %define	containerd_commit 4ab9917
 # v0.8.0-dev.2-464-g0f53435
 %define	libnetwork_commit 0f53435
-#define	subver -rc7
+%define	subver -rc1
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	17.03.1
+Version:	17.03.2
 Release:	0.1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
-Source0:	https://github.com/docker/docker/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
-# Source0-md5:	e9692eaf80c78fcc860643e3468c6c76
+Source0:	https://github.com/docker/docker/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
+# Source0-md5:	4434d6891814a02f1e7f3879fa85cc65
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	c4eff71ea7da80d25f7cece171683a03
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
@@ -62,8 +62,8 @@ Suggests:	git-core >= 1.7
 Suggests:	libcgroup
 Suggests:	xz >= 1:4.9
 Provides:	group(docker)
+Obsoletes:	docker < 17.0
 Obsoletes:	lxc-docker < 1.1.1
-Conflicts:	docker
 # only runs on x64 hosts for now:
 # https://github.com/docker/docker/issues/136
 # https://github.com/docker/docker/issues/611
@@ -142,7 +142,7 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q -n moby-%{version}-ce %{?subver:-n %{name}-%{version}%{subver}} -a1 -a2 -a3 -a4
+%setup -q -n moby-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
 mv runc-%{runc_commit}* runc
 mv containerd-%{containerd_commit}* containerd
 mv libnetwork-%{libnetwork_commit}* libnetwork
