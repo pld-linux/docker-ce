@@ -21,7 +21,7 @@ Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
 Version:	17.03.2
-Release:	0.2
+Release:	0.7
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker/releases
@@ -256,6 +256,17 @@ if [ "$1" = "0" ]; then
 	%groupremove docker
 fi
 %systemd_reload
+
+%triggerun -- docker < 17.0
+# Prevent preun from docker from working
+chmod a-x /etc/rc.d/init.d/docker
+
+%triggerpostun -- docker < 17.0
+# Restore what triggerun removed
+chmod 754 /etc/rc.d/init.d/docker
+# reinstall docker init.d links, which could be different
+/sbin/chkconfig --del docker
+/sbin/chkconfig --add docker
 
 %clean
 rm -rf $RPM_BUILD_ROOT
