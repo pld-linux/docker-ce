@@ -9,30 +9,30 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-136-g54296cf4
-%define	runc_commit 54296cf
-# v0.2.6
-%define	containerd_commit 4ab9917
-# v0.8.0-dev.2-464-g0f53435
-%define	libnetwork_commit 0f53435
-%define	subver -rc1
+# v1.0.0-rc2-394-g810190ce
+%define	runc_commit 810190c
+# v0.2.8-45-g6e23458c
+%define	containerd_commit 6e23458
+# v0.8.0-dev.2-624-g7b2b1feb
+%define	libnetwork_commit 7b2b1fe
+#define	subver -rc1
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	17.03.2
-Release:	0.7
+Version:	17.06.1
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
-# https://github.com/docker/docker/releases
-Source0:	https://github.com/docker/docker/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
-# Source0-md5:	4434d6891814a02f1e7f3879fa85cc65
+# https://github.com/docker/docker-ce/releases
+Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
+# Source0-md5:	a0d638496215364a7eec4d280dba62f1
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	c4eff71ea7da80d25f7cece171683a03
+# Source1-md5:	d2d5d628662bfbe11fd0d1bb7eb1c63c
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	37dae1d17f530c2c7f7a35d3bf0977a4
+# Source2-md5:	d1d057d831d46021cefee3a3c52c6c65
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	7cfbfe76355aae3577c77a6a4b2c92db
+# Source3-md5:	9360e38c43e862e42c128db1852ac5bb
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
 # Source4-md5:	c29541112a242c53c82bb6b1213f288f
 Source5:	dockerd.sh
@@ -146,46 +146,74 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q -n moby-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
-mv runc-%{runc_commit}* runc
-mv containerd-%{containerd_commit}* containerd
-mv libnetwork-%{libnetwork_commit}* libnetwork
-mv tini-* tini
-%patch0 -p1
+%setup -q -n docker-ce-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
 
-install -d vendor/src/github.com/docker
-ln -s $(pwd) vendor/src/github.com/docker/docker
-ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
-ln -s $(pwd)/libnetwork vendor/src/github.com/docker/libnetwork
+mv runc-%{runc_commit}* runc
+mv runc/vendor runc/src
+ln -s ../../.. runc/src/github.com/opencontainers/runc
+
+mv containerd-%{containerd_commit}* containerd
+ln -s ../../../.. containerd/vendor/src/github.com/containerd/containerd
+
+mv libnetwork-%{libnetwork_commit}* libnetwork
+install -d libnetwork/gopath
+mv libnetwork/vendor libnetwork/gopath/src
+ln -s ../../../.. libnetwork/gopath/src/github.com/docker/libnetwork
+
+mv tini-* tini
+
+install -d components/cli/.gopath/src/github.com/docker
+ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
+
+%patch0 -p1 -d components/engine
 
 %build
-v=$(awk -F= '/^RUNC_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+f=components/engine/hack/dockerfile/binaries-commits
+v=$(awk -F= '/^RUNC_COMMIT/ {print $2}' $f)
 echo "$v" | grep "^%{runc_commit}"
-v=$(awk -F= '/^CONTAINERD_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^CONTAINERD_COMMIT/ {print $2}' $f)
 echo "$v" | grep "^%{containerd_commit}"
-v=$(awk -F= '/^LIBNETWORK_COMMIT/ {print $2}' hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^LIBNETWORK_COMMIT/ {print $2}' $f)
 echo "$v" | grep "^%{libnetwork_commit}"
 
-export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
-export DOCKER_GITCOMMIT="pld/%{version}"
+export VERSION=%{version}
+export GITCOMMIT="pld/%{version}" # for cli
+export DOCKER_GITCOMMIT="pld/%{version}" # for engine
+
 # build docker-runc
-%{__make} -C runc
+sed -i -e 's,shell git,shell false,' runc/Makefile
+GOPATH=$(pwd)/runc \
+%{__make} -C runc \
+	COMMIT=%{runc_commit}
+./runc/runc -v
 
 # build docker-containerd
+GOPATH=$(pwd)/containerd/vendor \
 %{__make} -C containerd
 
 # build docker-proxy
+cd libnetwork
+GOPATH=$(pwd)/gopath \
 go build -ldflags="-linkmode=external" \
 	-o docker-proxy \
 	github.com/docker/libnetwork/cmd/proxy
+cd ..
 
 # build docker-init
 cd tini
 cmake .
 %{__make}
-cd ..
 
+# docker cli
+cd ../components/cli
+GOPATH=$(pwd)/.gopath \
+%{__make} dynbinary
+./build/docker -v
+
+cd ../engine
+AUTO_GOPATH=1 \
 bash -x hack/make.sh dynbinary
+./bundles/latest/dynbinary-daemon/dockerd -v
 %if %{with doc}
 man/md2man-all.sh
 %endif
@@ -196,23 +224,26 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
-install -p bundles/latest/dynbinary-client/docker $RPM_BUILD_ROOT%{_bindir}/docker
-install -p bundles/latest/dynbinary-daemon/dockerd $RPM_BUILD_ROOT%{_sbindir}/dockerd
+# docker-cli
+install -p components/cli/build/docker $RPM_BUILD_ROOT%{_bindir}/docker
 
-# install docker-runc
+# docker-runc
 install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
 
-# install docker-containerd
+# docker-containerd
 install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-containerd
 install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
 install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 
-# install docker-proxy
-install -p docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
+# docker-proxy
+install -p libnetwork/docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
 
-# install docker-init
+# docker-init
 install -p tini/tini $RPM_BUILD_ROOT%{_sbindir}/docker-init
 
+# dockerd
+cd components/engine
+install -p bundles/latest/dynbinary-daemon/dockerd $RPM_BUILD_ROOT%{_sbindir}/dockerd
 cp -p contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
@@ -223,18 +254,19 @@ cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
 install -d $RPM_BUILD_ROOT/lib/udev/rules.d
 cp -p contrib/udev/80-docker.rules $RPM_BUILD_ROOT/lib/udev/rules.d
 
-# bash and zsh completion
-install -d $RPM_BUILD_ROOT%{bash_compdir}
-cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/docker
-install -d $RPM_BUILD_ROOT%{zsh_compdir}
-cp -p contrib/completion/zsh/_docker $RPM_BUILD_ROOT%{zsh_compdir}
-
 # vim syntax
 %if %{with vim}
 install -d $RPM_BUILD_ROOT%{_vimdatadir}
 cp -a contrib/syntax/vim/* $RPM_BUILD_ROOT%{_vimdatadir}
 %{__rm} $RPM_BUILD_ROOT%{_vimdatadir}/{LICENSE,README.md}
 %endif
+
+# bash and zsh completion
+cd ../cli/contrib/completion
+install -d $RPM_BUILD_ROOT%{bash_compdir}
+cp -p bash/docker $RPM_BUILD_ROOT%{bash_compdir}
+install -d $RPM_BUILD_ROOT%{zsh_compdir}
+cp -p zsh/_docker $RPM_BUILD_ROOT%{zsh_compdir}
 
 %pre
 %groupadd -g 296 docker
@@ -273,7 +305,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md CHANGELOG.md CONTRIBUTING.md LICENSE AUTHORS NOTICE MAINTAINERS
+%doc components/engine/{README.md,CHANGELOG.md,CONTRIBUTING.md,LICENSE,AUTHORS,NOTICE,MAINTAINERS}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
@@ -313,7 +345,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with vim}
 %files -n vim-syntax-%{name}
 %defattr(644,root,root,755)
-%doc contrib/syntax/vim/{README.md,LICENSE}
+%doc components/engine/contrib/syntax/vim/{README.md,LICENSE}
 %{_vimdatadir}/doc/dockerfile.txt
 %{_vimdatadir}/ftdetect/dockerfile.vim
 %{_vimdatadir}/syntax/dockerfile.vim
