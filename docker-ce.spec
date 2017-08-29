@@ -147,9 +147,19 @@ This plugin provides syntax highlighting in Dockerfile.
 
 %prep
 %setup -q -n docker-ce-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
-#mv runc-%{runc_commit}* runc
-#mv containerd-%{containerd_commit}* containerd
-#mv libnetwork-%{libnetwork_commit}* libnetwork
+
+mv runc-%{runc_commit}* runc
+mv runc/vendor runc/src
+ln -s ../../.. runc/src/github.com/opencontainers/runc
+
+mv containerd-%{containerd_commit}* containerd
+ln -s ../../../.. containerd/vendor/src/github.com/containerd/containerd
+
+mv libnetwork-%{libnetwork_commit}* libnetwork
+install -d libnetwork/gopath
+mv libnetwork/vendor libnetwork/gopath/src
+ln -s ../../../.. libnetwork/gopath/src/github.com/docker/libnetwork
+
 mv tini-* tini
 %patch0 -p1 -d components/engine
 
@@ -175,27 +185,33 @@ echo "$v" | grep "^%{libnetwork_commit}"
 #export GOPATH=$(pwd)/components/engine
 #export GOROOT=$(pwd)/components/engine
 
-export AUTO_GOPATH=1
 export VERSION=%{version}
 export GITCOMMIT="pld/%{version}" # for cli
 export DOCKER_GITCOMMIT="pld/%{version}" # for engine
 
 # build docker-runc
-#%{__make} -C runc
+GOPATH=$(pwd)/runc \
+%{__make} -C runc
+./runc/runc -v
 
 # build docker-containerd
-#%{__make} -C containerd
+GOPATH=$(pwd)/containerd/vendor \
+%{__make} -C containerd
 
 # build docker-proxy
-#go build -ldflags="-linkmode=external" \
-#	-o docker-proxy \
-#	github.com/docker/libnetwork/cmd/proxy
+cd libnetwork
+GOPATH=$(pwd)/gopath \
+go build -ldflags="-linkmode=external" \
+	-o docker-proxy \
+	github.com/docker/libnetwork/cmd/proxy
+cd ..
 
 # build docker-init
 cd tini
 cmake .
 %{__make}
 
+# docker cli
 cd ../components/cli
 #bash -x scripts/build/dynbinary
 #make VERSION=%{_origversion} GITCOMMIT=%{_gitcommit}
@@ -206,9 +222,12 @@ mkdir -p .gopath/src/"$(dirname "${DOCKER_PKG}")"
 ln -sfn ../../../.. .gopath/src/"${DOCKER_PKG}"
 GOPATH=$(pwd)/.gopath \
 %{__make} dynbinary #manpages
+./build/docker -v
 
 cd ../engine
+AUTO_GOPATH=1 \
 bash -x hack/make.sh dynbinary
+./bundles/latest/dynbinary-daemon/dockerd -v
 %if %{with doc}
 man/md2man-all.sh
 %endif
@@ -219,25 +238,28 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
-install -p components/engine/bundles/latest/dynbinary-daemon/dockerd $RPM_BUILD_ROOT%{_sbindir}/dockerd
+# docker-cli
 install -p components/cli/build/docker $RPM_BUILD_ROOT%{_bindir}/docker
 
-# install docker-runc
+# docker-runc
 install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
 
-# install docker-containerd
+# docker-containerd
 install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-containerd
 install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
 install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
 
-# install docker-proxy
-install -p docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
+# docker-proxy
+install -p libnetwork/docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
 
-# install docker-init
+# docker-init
 install -p tini/tini $RPM_BUILD_ROOT%{_sbindir}/docker-init
 
-cp -p components/engine/contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p components/engine/contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
+# dockerd
+cd components/engine
+install -p bundles/latest/dynbinary-daemon/dockerd $RPM_BUILD_ROOT%{_sbindir}/dockerd
+cp -p contrib/init/systemd/docker.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p contrib/init/systemd/docker.socket $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 install -p %{SOURCE5} $RPM_BUILD_ROOT%{_libexecdir}/dockerd
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
@@ -296,7 +318,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md CHANGELOG.md CONTRIBUTING.md LICENSE AUTHORS NOTICE MAINTAINERS
+%doc components/engine/{README.md,CHANGELOG.md,CONTRIBUTING.md,LICENSE,AUTHORS,NOTICE,MAINTAINERS}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
@@ -336,7 +358,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with vim}
 %files -n vim-syntax-%{name}
 %defattr(644,root,root,755)
-%doc contrib/syntax/vim/{README.md,LICENSE}
+%doc components/engine/contrib/syntax/vim/{README.md,LICENSE}
 %{_vimdatadir}/doc/dockerfile.txt
 %{_vimdatadir}/ftdetect/dockerfile.vim
 %{_vimdatadir}/syntax/dockerfile.vim
