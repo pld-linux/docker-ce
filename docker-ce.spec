@@ -158,6 +158,7 @@ mv tini-* tini
 #ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
 #ln -s $(pwd)/libnetwork vendor/src/github.com/docker/libnetwork
 
+#ln -s ../../.. components/cli/vendor/github.com/docker/cli
 #ln -s ../../../../cli components/engine/vendor/github.com/docker
 #ln -s cli/vendor/github.com/docker/docker components/engine/vendor/github.com/docker
 #ln -s ../../.. components/engine/vendor/github.com/docker/docker
@@ -172,9 +173,13 @@ echo "$v" | grep "^%{libnetwork_commit}"
 
 #export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
 #export GOPATH=$(pwd)/components/engine
-export AUTO_GOPATH=1
 #export GOROOT=$(pwd)/components/engine
-export DOCKER_GITCOMMIT="pld/%{version}"
+
+export AUTO_GOPATH=1
+export VERSION=%{version}
+export GITCOMMIT="pld/%{version}" # for cli
+export DOCKER_GITCOMMIT="pld/%{version}" # for engine
+
 # build docker-runc
 #%{__make} -C runc
 
@@ -190,9 +195,19 @@ export DOCKER_GITCOMMIT="pld/%{version}"
 cd tini
 cmake .
 %{__make}
-cd ..
 
-cd components/engine
+cd ../components/cli
+#bash -x scripts/build/dynbinary
+#make VERSION=%{_origversion} GITCOMMIT=%{_gitcommit}
+#ln -s vendor src
+rm -rf .gopath
+DOCKER_PKG=github.com/docker/cli
+mkdir -p .gopath/src/"$(dirname "${DOCKER_PKG}")"
+ln -sfn ../../../.. .gopath/src/"${DOCKER_PKG}"
+GOPATH=$(pwd)/.gopath \
+%{__make} dynbinary #manpages
+
+cd ../engine
 bash -x hack/make.sh dynbinary
 %if %{with doc}
 man/md2man-all.sh
@@ -205,7 +220,7 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
 install -p components/engine/bundles/latest/dynbinary-daemon/dockerd $RPM_BUILD_ROOT%{_sbindir}/dockerd
-install -p components/engine/bundles/latest/dynbinary-client/docker $RPM_BUILD_ROOT%{_bindir}/docker
+install -p components/cli/build/docker $RPM_BUILD_ROOT%{_bindir}/docker
 
 # install docker-runc
 install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
