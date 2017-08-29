@@ -254,18 +254,19 @@ cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/docker
 install -d $RPM_BUILD_ROOT/lib/udev/rules.d
 cp -p contrib/udev/80-docker.rules $RPM_BUILD_ROOT/lib/udev/rules.d
 
-# bash and zsh completion
-install -d $RPM_BUILD_ROOT%{bash_compdir}
-cp -p contrib/completion/bash/docker $RPM_BUILD_ROOT%{bash_compdir}/docker
-install -d $RPM_BUILD_ROOT%{zsh_compdir}
-cp -p contrib/completion/zsh/_docker $RPM_BUILD_ROOT%{zsh_compdir}
-
 # vim syntax
 %if %{with vim}
 install -d $RPM_BUILD_ROOT%{_vimdatadir}
 cp -a contrib/syntax/vim/* $RPM_BUILD_ROOT%{_vimdatadir}
 %{__rm} $RPM_BUILD_ROOT%{_vimdatadir}/{LICENSE,README.md}
 %endif
+
+# bash and zsh completion
+cd ../cli/contrib/completion
+install -d $RPM_BUILD_ROOT%{bash_compdir}
+cp -p bash/docker $RPM_BUILD_ROOT%{bash_compdir}
+install -d $RPM_BUILD_ROOT%{zsh_compdir}
+cp -p zsh/_docker $RPM_BUILD_ROOT%{zsh_compdir}
 
 %pre
 %groupadd -g 296 docker
