@@ -161,29 +161,20 @@ mv libnetwork/vendor libnetwork/gopath/src
 ln -s ../../../.. libnetwork/gopath/src/github.com/docker/libnetwork
 
 mv tini-* tini
+
+install -d components/cli/.gopath/src/github.com/docker
+ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
+
 %patch0 -p1 -d components/engine
 
-#install -d vendor/src/github.com/docker
-#ln -s $(pwd) vendor/src/github.com/docker/docker
-#ln -s $(pwd)/containerd containerd/vendor/src/github.com/docker/containerd
-#ln -s $(pwd)/libnetwork vendor/src/github.com/docker/libnetwork
-
-#ln -s ../../.. components/cli/vendor/github.com/docker/cli
-#ln -s ../../../../cli components/engine/vendor/github.com/docker
-#ln -s cli/vendor/github.com/docker/docker components/engine/vendor/github.com/docker
-#ln -s ../../.. components/engine/vendor/github.com/docker/docker
-
 %build
-v=$(awk -F= '/^RUNC_COMMIT/ {print $2}' components/engine/hack/dockerfile/binaries-commits)
+f=components/engine/hack/dockerfile/binaries-commits
+v=$(awk -F= '/^RUNC_COMMIT/ {print $2}' $f)
 echo "$v" | grep "^%{runc_commit}"
-v=$(awk -F= '/^CONTAINERD_COMMIT/ {print $2}' components/engine/hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^CONTAINERD_COMMIT/ {print $2}' $f)
 echo "$v" | grep "^%{containerd_commit}"
-v=$(awk -F= '/^LIBNETWORK_COMMIT/ {print $2}' components/engine/hack/dockerfile/binaries-commits)
+v=$(awk -F= '/^LIBNETWORK_COMMIT/ {print $2}' $f)
 echo "$v" | grep "^%{libnetwork_commit}"
-
-#export GOPATH=$(pwd)/vendor:$(pwd)/containerd/vendor
-#export GOPATH=$(pwd)/components/engine
-#export GOROOT=$(pwd)/components/engine
 
 export VERSION=%{version}
 export GITCOMMIT="pld/%{version}" # for cli
@@ -213,15 +204,8 @@ cmake .
 
 # docker cli
 cd ../components/cli
-#bash -x scripts/build/dynbinary
-#make VERSION=%{_origversion} GITCOMMIT=%{_gitcommit}
-#ln -s vendor src
-rm -rf .gopath
-DOCKER_PKG=github.com/docker/cli
-mkdir -p .gopath/src/"$(dirname "${DOCKER_PKG}")"
-ln -sfn ../../../.. .gopath/src/"${DOCKER_PKG}"
 GOPATH=$(pwd)/.gopath \
-%{__make} dynbinary #manpages
+%{__make} dynbinary
 ./build/docker -v
 
 cd ../engine
