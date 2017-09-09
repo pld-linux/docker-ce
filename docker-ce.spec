@@ -20,13 +20,13 @@ Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	17.06.1
+Version:	17.06.2
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
-# Source0-md5:	a0d638496215364a7eec4d280dba62f1
+# Source0-md5:	45f92308bd542b6a8344c490d0383b64
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	d2d5d628662bfbe11fd0d1bb7eb1c63c
 Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
