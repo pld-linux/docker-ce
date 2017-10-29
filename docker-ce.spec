@@ -207,6 +207,7 @@ cmake .
 # docker cli
 cd ../components/cli
 GOPATH=$(pwd)/.gopath \
+DISABLE_WARN_OUTSIDE_CONTAINER=1 \
 %{__make} dynbinary
 ./build/docker -v
 
