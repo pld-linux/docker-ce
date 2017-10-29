@@ -9,30 +9,31 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-394-g810190ce
-%define	runc_commit 810190c
-# v0.2.8-45-g6e23458c
-%define	containerd_commit 6e23458
+# v1.0.0-rc2-528-g3f2f8b84
+%define	runc_commit 3f2f8b8
+# v0.2.9-27-g06b9cb35
+%define	containerd_commit 06b9cb3
 # v0.8.0-dev.2-624-g7b2b1feb
 %define	libnetwork_commit 7b2b1fe
-#define	subver -rc1
+#define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	17.06.2
+Version:	17.09.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
+#Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
-# Source0-md5:	45f92308bd542b6a8344c490d0383b64
+# Source0-md5:	e0df90392b2daa545562342dabf181cf
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	d2d5d628662bfbe11fd0d1bb7eb1c63c
-Source2:	https://github.com/docker/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	d1d057d831d46021cefee3a3c52c6c65
+# Source1-md5:	0dc3b1eafba193280d6cf6ffa46c2521
+Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
+# Source2-md5:	202389709618a6b181216e99718f0132
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	9360e38c43e862e42c128db1852ac5bb
+# Source3-md5:	a9beb9207b291373dc4e376f04056e8a
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
 # Source4-md5:	c29541112a242c53c82bb6b1213f288f
 Source5:	dockerd.sh
@@ -146,14 +147,15 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q -n docker-ce-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
+%setup -q -n %{name}-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
 
 mv runc-%{runc_commit}* runc
 mv runc/vendor runc/src
 ln -s ../../.. runc/src/github.com/opencontainers/runc
 
 mv containerd-%{containerd_commit}* containerd
-ln -s ../../../.. containerd/vendor/src/github.com/containerd/containerd
+mv containerd/vendor containerd/src
+ln -s ../../.. containerd/src/github.com/containerd/containerd
 
 mv libnetwork-%{libnetwork_commit}* libnetwork
 install -d libnetwork/gopath
@@ -188,7 +190,7 @@ GOPATH=$(pwd)/runc \
 ./runc/runc -v
 
 # build docker-containerd
-GOPATH=$(pwd)/containerd/vendor \
+GOPATH=$(pwd)/containerd \
 %{__make} -C containerd
 
 # build docker-proxy
