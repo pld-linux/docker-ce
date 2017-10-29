@@ -15,19 +15,19 @@
 %define	containerd_commit 06b9cb3
 # v0.8.0-dev.2-624-g7b2b1feb
 %define	libnetwork_commit 7b2b1fe
-%define	subver -rc2
+#define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
 Version:	17.09.0
-Release:	0.1
+Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
-Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
-# Source0-md5:	c8bc9207fa21e6af5be1f79234731ad3
-#Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
+#Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
+Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
+# Source0-md5:	e0df90392b2daa545562342dabf181cf
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	0dc3b1eafba193280d6cf6ffa46c2521
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
