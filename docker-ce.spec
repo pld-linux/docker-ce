@@ -170,13 +170,10 @@ ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
 %patch0 -p1 -d components/engine
 
 %build
-f=components/engine/hack/dockerfile/binaries-commits
-v=$(awk -F= '/^RUNC_COMMIT/ {print $2}' $f)
-echo "$v" | grep "^%{runc_commit}"
-v=$(awk -F= '/^CONTAINERD_COMMIT/ {print $2}' $f)
-echo "$v" | grep "^%{containerd_commit}"
-v=$(awk -F= '/^LIBNETWORK_COMMIT/ {print $2}' $f)
-echo "$v" | grep "^%{libnetwork_commit}"
+. components/engine/hack/dockerfile/binaries-commits
+echo "$RUNC_COMMIT" | grep "^%{runc_commit}"
+echo "$CONTAINERD_COMMIT" | grep "^%{containerd_commit}"
+echo "$LIBNETWORK_COMMIT" | grep "^%{libnetwork_commit}"
 
 export VERSION=%{version}
 export GITCOMMIT="pld/%{version}" # for cli
@@ -186,12 +183,13 @@ export DOCKER_GITCOMMIT="pld/%{version}" # for engine
 sed -i -e 's,shell git,shell false,' runc/Makefile
 GOPATH=$(pwd)/runc \
 %{__make} -C runc \
-	COMMIT=%{runc_commit}
+	COMMIT=$RUNC_COMMIT
 ./runc/runc -v
 
 # build docker-containerd
 GOPATH=$(pwd)/containerd \
-%{__make} -C containerd
+%{__make} -C containerd \
+	GIT_COMMIT=$CONTAINERD_COMMIT
 
 # build docker-proxy
 cd libnetwork
