@@ -48,6 +48,7 @@ BuildRequires:	golang >= 1.6
 BuildRequires:	libseccomp-devel >= 2.2.1
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sqlite3-devel >= 3.7.9
+BuildRequires:	xxd
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
