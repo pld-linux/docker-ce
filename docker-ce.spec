@@ -172,13 +172,13 @@ ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
 
 %build
 . components/engine/hack/dockerfile/binaries-commits
-echo "$RUNC_COMMIT" | grep "^%{runc_commit}"
-echo "$CONTAINERD_COMMIT" | grep "^%{containerd_commit}"
-echo "$LIBNETWORK_COMMIT" | grep "^%{libnetwork_commit}"
+echo "RUNC_COMMIT=$RUNC_COMMIT" | grep "=%{runc_commit}"
+echo "CONTAINERD_COMMIT=$CONTAINERD_COMMIT" | grep "=%{containerd_commit}"
+echo "LIBNETWORK_COMMIT=$LIBNETWORK_COMMIT" | grep "=%{libnetwork_commit}"
 
 export VERSION=%{version}
-export GITCOMMIT="pld/%{version}" # for cli
-export DOCKER_GITCOMMIT="pld/%{version}" # for engine
+export GITCOMMIT="PLD-Linux/%{version}" # for cli
+export DOCKER_GITCOMMIT="PLD-Linux/%{version}" # for engine
 
 # build docker-runc
 sed -i -e 's,shell git,shell false,' runc/Makefile
