@@ -10,9 +10,9 @@
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
 # v1.0.0-rc2-528-g3f2f8b84
-%define	runc_commit 3f2f8b8
+%define	runc_commit b2567b3
 # v0.2.9-27-g06b9cb35
-%define	containerd_commit 06b9cb3
+%define	containerd_commit 89623f2
 # v0.8.0-dev.2-624-g7b2b1feb
 %define	libnetwork_commit 7b2b1fe
 #define	subver -rc2
@@ -20,18 +20,18 @@ Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	17.09.0
+Version:	17.12.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
-# Source0-md5:	e0df90392b2daa545562342dabf181cf
+# Source0-md5:	545b780b4cf5bb1c83c5615d7153e9c7
 Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	0dc3b1eafba193280d6cf6ffa46c2521
+# Source1-md5:	1a3088f614219774676fe9416f220e36
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	202389709618a6b181216e99718f0132
+# Source2-md5:	ada04f6ed5e19ae9da47a55778cc536b
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
 # Source3-md5:	a9beb9207b291373dc4e376f04056e8a
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
@@ -44,7 +44,7 @@ URL:		https://www.docker.com/community-edition/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
 BuildRequires:	device-mapper-devel >= 2.02.89
-BuildRequires:	golang >= 1.6
+BuildRequires:	golang >= 1.9
 BuildRequires:	libseccomp-devel >= 2.2.1
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sqlite3-devel >= 3.7.9
