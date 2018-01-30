@@ -9,9 +9,9 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc2-528-g3f2f8b84
+# v1.0.0-rc4-171-gb2567b37
 %define	runc_commit b2567b3
-# v0.2.9-27-g06b9cb35
+# v1.0.0
 %define	containerd_commit 89623f2
 # v0.8.0-dev.2-624-g7b2b1feb
 %define	libnetwork_commit 7b2b1fe
@@ -28,7 +28,7 @@ Group:		Applications/System
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
 # Source0-md5:	545b780b4cf5bb1c83c5615d7153e9c7
-Source1:	https://github.com/docker/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
+Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	1a3088f614219774676fe9416f220e36
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
 # Source2-md5:	ada04f6ed5e19ae9da47a55778cc536b
