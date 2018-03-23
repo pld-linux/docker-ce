@@ -10,30 +10,30 @@
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
 # v1.0.0-rc4-171-gb2567b37
-%define	runc_commit 9f9c962
+%define	runc_commit 4fc53a8 
 # v1.0.0
-%define	containerd_commit 9b55aab
+%define	containerd_commit cfd0439
 # v0.8.0-dev.2-624-g7b2b1feb
-%define	libnetwork_commit 7b2b1fe
+%define	libnetwork_commit 1b91bc9
 #define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	17.12.1
+Version:	18.03.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
-# Source0-md5:	cac2dbd0f4588900e3f302207ec45910
+# Source0-md5:	e02c511acf83e4478dab64937e540a71
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	c4261fb890fd5815a86f78e15352d4a1
+# Source1-md5:	ffe14cfe0655f1a9c0ac95ad180c03f2
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	b3f0f39daa44b28be83535119a453863
+# Source2-md5:	62b42247000d62b71918c95272413331
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	a9beb9207b291373dc4e376f04056e8a
+# Source3-md5:	c6e746565303cb760b4f7b9b14c94431
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
 # Source4-md5:	c29541112a242c53c82bb6b1213f288f
 Source5:	dockerd.sh
@@ -68,7 +68,7 @@ Suggests:	xz >= 1:4.9
 Provides:	docker = %{version}
 Provides:	docker(engine) = %{version}
 Provides:	group(docker)
-Obsoletes:	docker < 17.0
+Obsoletes:	docker < 18.0
 Obsoletes:	lxc-docker < 1.1.1
 # only runs on x64 hosts for now:
 # https://github.com/docker/docker/issues/136
@@ -171,10 +171,7 @@ ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
 %patch0 -p1 -d components/engine
 
 %build
-. components/engine/hack/dockerfile/binaries-commits
-echo "RUNC_COMMIT=$RUNC_COMMIT" | grep "=%{runc_commit}"
-echo "CONTAINERD_COMMIT=$CONTAINERD_COMMIT" | grep "=%{containerd_commit}"
-echo "LIBNETWORK_COMMIT=$LIBNETWORK_COMMIT" | grep "=%{libnetwork_commit}"
+grep -rhE "=%{runc_commit}|=%{containerd_commit}|=%{libnetwork_commit}" $(pwd)/components/engine/hack/dockerfile/install/
 
 export VERSION=%{version}
 export GITCOMMIT="PLD-Linux/%{version}" # for cli
