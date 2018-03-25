@@ -9,11 +9,11 @@
 # NOTES
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc4-171-gb2567b37
+# v1.0.0-rc5
 %define	runc_commit 4fc53a8 
-# v1.0.0
+# v1.0.2
 %define	containerd_commit cfd0439
-# v0.8.0-dev.2-624-g7b2b1feb
+# v0.8.0-dev.2-1075-g1b91bc94
 %define	libnetwork_commit 1b91bc9
 #define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
