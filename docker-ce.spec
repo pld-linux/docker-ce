@@ -21,7 +21,7 @@ Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
 Version:	18.03.1
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
@@ -45,7 +45,7 @@ BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
 BuildRequires:	device-mapper-devel >= 2.02.89
 BuildRequires:	golang >= 1.9
-BuildRequires:	libseccomp-devel >= 2.2.1
+BuildRequires:	libseccomp-devel >= 2.3
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sqlite3-devel >= 3.7.9
 BuildRequires:	xxd
@@ -68,6 +68,7 @@ Suggests:	xz >= 1:4.9
 Provides:	docker = %{version}
 Provides:	docker(engine) = %{version}
 Provides:	group(docker)
+Requires:	libseccomp >= 2.3
 Obsoletes:	docker < 18.0
 Obsoletes:	lxc-docker < 1.1.1
 # only runs on x64 hosts for now:
