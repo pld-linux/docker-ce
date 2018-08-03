@@ -16,5 +16,8 @@ SERVICE_LIMITS="-n 1048576 -u 1048576"
 # Use overlay storage driver
 #OPTIONS="$OPTIONS --storage-driver=overlay"
 
+# https://github.com/docker/docker-ce/blob/master/components/cli/experimental/README.md
+#OPTIONS="$OPTIONS --experimental"
+
 # Mirror local registry in intranet which has no ssl cert
 #OPTIONS="$OPTIONS --insecure-registry registry.example.lan:5000 --registry-mirror http://registry.example.lan:5000"
