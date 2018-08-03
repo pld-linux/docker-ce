@@ -7,7 +7,8 @@
 # TODO: drop P docker when docker-compose updated to use docker(engine) dep
 
 # NOTES
-# https://github.com/docker/docker/blob/master/project/PACKAGERS.md#build-dependencies
+# - https://github.com/docker/docker-ce/releases
+# - https://github.com/moby/moby/blob/master/project/PACKAGERS.md#build-dependencies
 
 # v1.0.0-rc5
 %define	runc_commit 69663f0
