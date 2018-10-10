@@ -175,7 +175,7 @@ ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
 %build
 grep -rhE "=%{runc_commit}|=%{containerd_commit}|=%{libnetwork_commit}" $(pwd)/components/engine/hack/dockerfile/install/
 
-export VERSION=%{version}
+export VERSION=%{version}-ce # for `docker version`
 export GITCOMMIT="PLD-Linux/%{version}" # for cli
 export DOCKER_GITCOMMIT="PLD-Linux/%{version}" # for engine
 
