@@ -12,29 +12,29 @@
 
 # v1.0.0-rc5
 %define	runc_commit 69663f0
-# v1.1.1
-%define	containerd_commit d64c661
+# v1.1.2
+%define	containerd_commit 468a545
 # v0.8.0-dev.2-1075-g1b91bc94
-%define	libnetwork_commit 3ac297b
+%define	libnetwork_commit 6da50d1
 #define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	18.06.1
+Version:	18.09.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
-Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce/%{name}-%{version}-ce.tar.gz
-# Source0-md5:	00dd2de0d2ab6e743b7b4f8e27e2da86
+Source0:	https://github.com/docker/docker-ce/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	cf7f7fd8dde4bea3798cea36e8f806a1
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	980b5505478f3fe033dfe4922d7e0ea7
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	d06fa4307a8ef60efe86de98b0982287
+# Source2-md5:	ceeabc1ae59725a32174274bb83d1b14
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	f7e0a1a39a87252a2e1a1ad8f8fb5c66
+# Source3-md5:	b2d6d1427bdc142137280c66f732a4f2
 Source4:	https://github.com/krallin/tini/archive/v0.13.0/tini-0.13.0.tar.gz
 # Source4-md5:	c29541112a242c53c82bb6b1213f288f
 Source5:	dockerd.sh
@@ -150,7 +150,7 @@ BuildArch:	noarch
 This plugin provides syntax highlighting in Dockerfile.
 
 %prep
-%setup -q -n %{name}-%{version}-ce%{?subver} -a1 -a2 -a3 -a4
+%setup -q -n %{name}-%{version}%{?subver} -a1 -a2 -a3 -a4
 
 mv runc-%{runc_commit}* runc
 mv runc/vendor runc/src
@@ -179,14 +179,14 @@ export VERSION=%{version}-ce # for `docker version`
 export GITCOMMIT="PLD-Linux/%{version}" # for cli
 export DOCKER_GITCOMMIT="PLD-Linux/%{version}" # for engine
 
-# build docker-runc
+# build runc
 sed -i -e 's,shell git,shell false,' runc/Makefile
 GOPATH=$(pwd)/runc \
 %{__make} -C runc \
 	COMMIT=$RUNC_COMMIT
 ./runc/runc -v
 
-# build docker-containerd
+# build containerd
 GOPATH=$(pwd)/containerd \
 %{__make} -C containerd \
 	GIT_COMMIT=$CONTAINERD_COMMIT
@@ -228,13 +228,13 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/ini
 # docker-cli
 install -p components/cli/build/docker $RPM_BUILD_ROOT%{_bindir}/docker
 
-# docker-runc
-install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/docker-runc
+# runc
+install -p runc/runc $RPM_BUILD_ROOT%{_sbindir}/runc
 
-# docker-containerd
-install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/docker-containerd
-install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-shim
-install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/docker-containerd-ctr
+# containerd
+install -p containerd/bin/containerd $RPM_BUILD_ROOT%{_sbindir}/containerd
+install -p containerd/bin/containerd-shim $RPM_BUILD_ROOT%{_sbindir}/containerd-shim
+install -p containerd/bin/ctr $RPM_BUILD_ROOT%{_sbindir}/ctr
 
 # docker-proxy
 install -p libnetwork/docker-proxy $RPM_BUILD_ROOT%{_sbindir}/docker-proxy
@@ -310,12 +310,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
 %attr(755,root,root) %{_bindir}/docker
-%attr(755,root,root) %{_sbindir}/docker-containerd
-%attr(755,root,root) %{_sbindir}/docker-containerd-ctr
-%attr(755,root,root) %{_sbindir}/docker-containerd-shim
+%attr(755,root,root) %{_sbindir}/containerd
+%attr(755,root,root) %{_sbindir}/ctr
+%attr(755,root,root) %{_sbindir}/containerd-shim
 %attr(755,root,root) %{_sbindir}/docker-init
 %attr(755,root,root) %{_sbindir}/docker-proxy
-%attr(755,root,root) %{_sbindir}/docker-runc
+%attr(755,root,root) %{_sbindir}/runc
 %attr(755,root,root) %{_sbindir}/dockerd
 %attr(755,root,root) %{_libexecdir}/dockerd
 %{systemdunitdir}/docker.service
