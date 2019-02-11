@@ -21,14 +21,14 @@ Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	18.09.1
+Version:	18.09.2
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	97c245e5675e025ec8500af56e52f13e
+# Source0-md5:	8a67b2ebca0d3dbc0a268183b0990bd5
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	61f1deb4105cbca21d7acde965fb56c0
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
@@ -41,6 +41,7 @@ Source5:	dockerd.sh
 Source7:	docker.init
 Source8:	docker.sysconfig
 Patch0:		systemd.patch
+Patch1:		cve-2019-5736.patch
 URL:		https://www.docker.com/community-edition/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
@@ -171,6 +172,7 @@ install -d components/cli/.gopath/src/github.com/docker
 ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
 
 %patch0 -p1 -d components/engine
+%patch1 -p1 -d runc
 
 %build
 grep -rhE "=%{runc_commit}|=%{containerd_commit}|=%{libnetwork_commit}" $(pwd)/components/engine/hack/dockerfile/install/
