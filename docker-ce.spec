@@ -11,9 +11,9 @@
 # - https://github.com/moby/moby/blob/master/project/PACKAGERS.md#build-dependencies
 
 # v1.0.0-rc6
-%define	runc_commit 96ec217
-# v1.2.2
-%define	containerd_commit 9754871
+%define	runc_commit 6635b4f
+# v1.2.4
+%define	containerd_commit e6b3f56
 # v0.8.0-dev.2-1075-g1b91bc94
 %define	libnetwork_commit 2cfbf9b
 #define	subver -rc2
@@ -21,18 +21,18 @@ Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	18.09.2
+Version:	18.09.3
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	8a67b2ebca0d3dbc0a268183b0990bd5
+# Source0-md5:	6831b2f2342326bd303e0b8a33b634ad
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	61f1deb4105cbca21d7acde965fb56c0
+# Source1-md5:	af1d3202e57809bf8629f093d7acace6
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	129971a64170033244a880ebb04e1244
+# Source2-md5:	ba695c6d41ba33022c4e0555ba41bcdc
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
 # Source3-md5:	d09e629940b04e24a2f91b535c073f83
 Source4:	https://github.com/krallin/tini/archive/v0.18.0/tini-0.18.0.tar.gz
@@ -41,7 +41,6 @@ Source5:	dockerd.sh
 Source7:	docker.init
 Source8:	docker.sysconfig
 Patch0:		systemd.patch
-Patch1:		cve-2019-5736.patch
 URL:		https://www.docker.com/community-edition/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
@@ -172,7 +171,6 @@ install -d components/cli/.gopath/src/github.com/docker
 ln -s ../../../.. components/cli/.gopath/src/github.com/docker/cli
 
 %patch0 -p1 -d components/engine
-%patch1 -p1 -d runc
 
 %build
 grep -rhE "=%{runc_commit}|=%{containerd_commit}|=%{libnetwork_commit}" $(pwd)/components/engine/hack/dockerfile/install/
