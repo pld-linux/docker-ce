@@ -10,31 +10,31 @@
 # - https://github.com/docker/docker-ce/releases
 # - https://github.com/moby/moby/blob/master/project/PACKAGERS.md#build-dependencies
 
-# v1.0.0-rc6
-%define	runc_commit 2b18fe1
-# v1.2.5
-%define	containerd_commit bb71b10
+# v1.0.0-rc8
+%define	runc_commit 425e105
+# v1.2.6
+%define	containerd_commit 894b81a
 # v0.8.0-dev.2-1075-g1b91bc94
-%define	libnetwork_commit 872f0a8
+%define	libnetwork_commit e7933d4
 #define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	18.09.6
+Version:	18.09.7
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	788a30335b1c7d05d30cc08239901011
+# Source0-md5:	839d9a67029808b71d3bbfe9b905c0f6
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
-# Source1-md5:	203f2297b644c356278a3567a5494352
+# Source1-md5:	19cc68f9cb984d0ee796be183b767ff1
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
-# Source2-md5:	06c979a4703baa51edcd693bccb61395
+# Source2-md5:	26f6af6a60850b1ff63a7d382049bfa0
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	8242c1c253b07f3357d2e683cb7eb96f
+# Source3-md5:	c4ab81f1bfa4e98af4aabfc14d54042f
 Source4:	https://github.com/krallin/tini/archive/v0.18.0/tini-0.18.0.tar.gz
 # Source4-md5:	cc3b205a1b83b8e6ed6892fc5e8ef2c3
 Source5:	dockerd.sh
