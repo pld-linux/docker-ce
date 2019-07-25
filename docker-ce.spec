@@ -15,26 +15,26 @@
 # v1.2.6
 %define	containerd_commit 894b81a
 # v0.8.0-dev.2-1075-g1b91bc94
-%define	libnetwork_commit e7933d4
+%define	libnetwork_commit fc5a7d9
 #define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	18.09.7
+Version:	19.03.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	839d9a67029808b71d3bbfe9b905c0f6
+# Source0-md5:	54ad698dab2cf2de536ed3342a5582d3
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	19cc68f9cb984d0ee796be183b767ff1
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
 # Source2-md5:	26f6af6a60850b1ff63a7d382049bfa0
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	c4ab81f1bfa4e98af4aabfc14d54042f
+# Source3-md5:	dacd7bdb1d2a0a0f2365674614e57f8a
 Source4:	https://github.com/krallin/tini/archive/v0.18.0/tini-0.18.0.tar.gz
 # Source4-md5:	cc3b205a1b83b8e6ed6892fc5e8ef2c3
 Source5:	dockerd.sh
@@ -45,7 +45,7 @@ URL:		https://www.docker.com/community-edition/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
 BuildRequires:	device-mapper-devel >= 2.02.89
-BuildRequires:	golang >= 1.10
+BuildRequires:	golang >= 1.12
 BuildRequires:	libseccomp-devel >= 2.3
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sqlite3-devel >= 3.7.9
