@@ -75,7 +75,7 @@ Obsoletes:	lxc-docker < 1.1.1
 # only runs on x64 hosts for now:
 # https://github.com/docker/docker/issues/136
 # https://github.com/docker/docker/issues/611
-ExclusiveArch:	%{x8664}
+ExclusiveArch:	%{x8664} aarch64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		bash_compdir	%{_datadir}/bash-completion/completions
