@@ -15,26 +15,26 @@
 # v1.2.13
 %define	containerd_commit 7ad1843
 # v0.8.0-dev.2-1075-g1b91bc94
-%define	libnetwork_commit 153d076
+%define	libnetwork_commit 026aaba
 #define	subver -rc2
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
-Version:	19.03.11
+Version:	19.03.12
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
 #Source0:	https://github.com/docker/docker-ce/archive/v%{version}-ce%{subver}/%{name}-%{version}-ce%{subver}.tar.gz
 Source0:	https://github.com/docker/docker-ce/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	4af9c11658e8a9f11dd10d3a83c5c3fb
+# Source0-md5:	bcdaf190eaa49dd8a7d8cbdf9b2f1e4f
 Source1:	https://github.com/opencontainers/runc/archive/%{runc_commit}/runc-%{runc_commit}.tar.gz
 # Source1-md5:	b593d63c7df5a27fba615afcf411762f
 Source2:	https://github.com/containerd/containerd/archive/%{containerd_commit}/containerd-%{containerd_commit}.tar.gz
 # Source2-md5:	82af4401bdae0f3f39f8a4307e70f9f4
 Source3:	https://github.com/docker/libnetwork/archive/%{libnetwork_commit}/libnetwork-%{libnetwork_commit}.tar.gz
-# Source3-md5:	4489650d655a82d623a4be5e079fc04e
+# Source3-md5:	c0e1095ee51a12031c737652acc5cfbf
 Source4:	https://github.com/krallin/tini/archive/v0.18.0/tini-0.18.0.tar.gz
 # Source4-md5:	cc3b205a1b83b8e6ed6892fc5e8ef2c3
 Source5:	dockerd.sh
