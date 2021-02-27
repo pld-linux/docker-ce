@@ -111,9 +111,7 @@ Group:		Applications/Shells
 Requires:	%{name}
 Requires:	bash-completion >= 2.0
 Obsoletes:	bash-completion-lxc-docker < 1.1.1
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n bash-completion-%{name}
 This package provides bash-completion for Docker.
@@ -126,9 +124,7 @@ Summary:	zsh completion for Docker
 Summary(pl.UTF-8):	Uzupełnianie parametrów w zsh dla poleceń Dockera
 Group:		Applications/Shells
 Requires:	%{name}
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n zsh-completion-%{name}
 This package provides zsh completion for Docker.
@@ -142,9 +138,7 @@ Group:		Applications/Editors/Vim
 Requires:	%{name} = %{version}-%{release}
 Requires:	vim-rt >= 4:7.2.170
 Obsoletes:	vim-syntax-lxc-docker < 1.1.1
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n vim-syntax-%{name}
 This plugin provides syntax highlighting in Dockerfile.
