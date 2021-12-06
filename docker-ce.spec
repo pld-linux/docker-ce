@@ -57,6 +57,7 @@ Requires(pre):	/usr/sbin/groupadd
 Requires:	ca-certificates
 Requires:	iproute2 >= 3.5
 Requires:	iptables
+Requires:	libseccomp >= 2.3
 Requires:	rc-scripts >= 0.4.0.10
 Requires:	systemd-units >= 38
 Requires:	tar >= 1:1.26
@@ -69,7 +70,6 @@ Suggests:	xz >= 1:4.9
 Provides:	docker = %{version}
 Provides:	docker(engine) = %{version}
 Provides:	group(docker)
-Requires:	libseccomp >= 2.3
 Obsoletes:	docker < 18.0
 Obsoletes:	lxc-docker < 1.1.1
 # only runs on x64 hosts for now:
