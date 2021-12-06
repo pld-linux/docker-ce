@@ -216,6 +216,7 @@ man/md2man-all.sh
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man1,/etc/{rc.d/init.d,sysconfig},%{systemdunitdir}} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/docker \
 	$RPM_BUILD_ROOT%{_libexecdir} \
 	$RPM_BUILD_ROOT/var/lib/docker/{containers,execdriver,graph,image,init,network,swarm,tmp,trust,vfs,volumes}
 
@@ -303,6 +304,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc components/engine/{README.md,CHANGELOG.md,CONTRIBUTING.md,LICENSE,AUTHORS,NOTICE,MAINTAINERS}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/docker
 %attr(754,root,root) /etc/rc.d/init.d/docker
+%dir %{_sysconfdir}/docker
 %attr(755,root,root) %{_bindir}/docker
 %attr(755,root,root) %{_sbindir}/containerd
 %attr(755,root,root) %{_sbindir}/ctr
