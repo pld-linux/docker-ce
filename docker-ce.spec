@@ -22,7 +22,7 @@ Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
 Version:	19.03.14
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
@@ -172,6 +172,7 @@ grep -rhE "=%{runc_commit}|=%{containerd_commit}|=%{libnetwork_commit}" $(pwd)/c
 export VERSION=%{version}-ce # for `docker version`
 export GITCOMMIT="PLD-Linux/%{version}" # for cli
 export DOCKER_GITCOMMIT="PLD-Linux/%{version}" # for engine
+export GO111MODULE=off
 
 # build runc
 sed -i -e 's,shell git,shell false,' runc/Makefile
