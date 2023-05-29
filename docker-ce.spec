@@ -45,6 +45,7 @@ URL:		https://www.docker.com/community-edition/
 BuildRequires:	btrfs-progs-devel >= 3.16.1
 BuildRequires:	cmake
 BuildRequires:	device-mapper-devel >= 2.02.89
+BuildRequires:	glibc-static
 BuildRequires:	golang >= 1.12
 BuildRequires:	libseccomp-devel >= 2.3
 BuildRequires:	rpmbuild(macros) >= 1.644
