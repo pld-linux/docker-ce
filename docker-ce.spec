@@ -48,6 +48,7 @@ BuildRequires:	device-mapper-devel >= 2.02.89
 BuildRequires:	glibc-static
 BuildRequires:	golang >= 1.12
 BuildRequires:	libseccomp-devel >= 2.3
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sqlite3-devel >= 3.7.9
 BuildRequires:	xxd
