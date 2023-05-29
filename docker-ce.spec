@@ -111,7 +111,7 @@ Summary:	bash-completion for Docker
 Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla Dockera
 Group:		Applications/Shells
 Requires:	%{name}
-Requires:	bash-completion >= 2.0
+Requires:	bash-completion >= 1:2.0
 Obsoletes:	bash-completion-lxc-docker < 1.1.1
 BuildArch:	noarch
 
