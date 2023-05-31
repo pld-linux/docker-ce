@@ -22,7 +22,7 @@ Name:		docker-ce
 # Using Docker-CE, Stay on Stable channel
 # https://docs.docker.com/engine/installation/
 Version:	19.03.14
-Release:	2
+Release:	3
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/docker/docker-ce/releases
