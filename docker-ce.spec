@@ -12,7 +12,7 @@ Source2:	docker.init
 Source3:	docker.sysconfig
 Patch0:		systemd.patch
 URL:		https://www.docker.com/
-BuildRequires:	golang >= 1.12
+BuildRequires:	golang >= 1.21
 BuildRequires:	linux-libc-headers >= 7:4.12
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.009
