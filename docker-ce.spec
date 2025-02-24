@@ -11,6 +11,7 @@ Source1:	dockerd.sh
 Source2:	docker.init
 Source3:	docker.sysconfig
 Patch0:		systemd.patch
+Patch1:		setsockopt-x86.patch
 URL:		https://www.docker.com/
 BuildRequires:	golang >= 1.21
 BuildRequires:	linux-libc-headers >= 7:4.12
@@ -69,6 +70,7 @@ databases.
 %prep
 %setup -q -n moby-%{version}
 %patch -P0 -p1
+%patch -P1 -p1
 
 %build
 export VERSION=%{version}
