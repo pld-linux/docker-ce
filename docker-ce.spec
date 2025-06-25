@@ -1,12 +1,12 @@
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
-Version:	28.0.1
+Version:	28.3.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/moby/moby/releases
 Source0:	https://github.com/moby/moby/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	57f86595d3dddc6541ca24acaf7c519c
+# Source0-md5:	87a336d8939e50bd34526d748d33faeb
 Source1:	dockerd.sh
 Source2:	docker.init
 Source3:	docker.sysconfig

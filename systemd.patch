@@ -1,7 +1,7 @@
 --- docker-1.12.1/contrib/init/systemd/docker.service	2016-08-30 00:06:51.450800482 +0300
 +++ docker-1.12.1/contrib/init/systemd/docker.service	2016-09-26 21:36:55.000000000 +0300
 @@ -5,11 +5,12 @@
- Requires=docker.socket
+ StartLimitIntervalSec=60
  
  [Service]
 +EnvironmentFile=-/etc/sysconfig/docker
