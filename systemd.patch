@@ -1,9 +1,10 @@
---- docker-1.12.1/contrib/init/systemd/docker.service	2016-08-30 00:06:51.450800482 +0300
-+++ docker-1.12.1/contrib/init/systemd/docker.service	2016-09-26 21:36:55.000000000 +0300
-@@ -5,11 +5,12 @@
+--- a/contrib/init/systemd/docker.service
++++ b/contrib/init/systemd/docker.service
+@@ -9,11 +9,13 @@
  StartLimitIntervalSec=60
  
  [Service]
++Environment=OPTIONS=
 +EnvironmentFile=-/etc/sysconfig/docker
  Type=notify
  # the default is not to use systemd for cgroups because the delegate issues still
@@ -14,14 +15,3 @@
  ExecReload=/bin/kill -s HUP $MAINPID
  TimeoutStartSec=0
  RestartSec=2
---- moby-27.1.2/contrib/init/systemd/docker.socket.orig	2024-08-10 15:59:46.000000000 +0200
-+++ moby-27.1.2/contrib/init/systemd/docker.socket	2024-08-20 20:17:39.947517005 +0200
-@@ -4,7 +4,7 @@
- [Socket]
- # If /var/run is not implemented as a symlink to /run, you may need to
- # specify ListenStream=/var/run/docker.sock instead.
--ListenStream=/run/docker.sock
-+ListenStream=/var/run/docker.sock
- SocketMode=0660
- SocketUser=root
- SocketGroup=docker

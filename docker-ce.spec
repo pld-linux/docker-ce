@@ -1,12 +1,12 @@
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
-Version:	28.3.0
+Version:	29.3.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/moby/moby/releases
-Source0:	https://github.com/moby/moby/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	87a336d8939e50bd34526d748d33faeb
+Source0:	https://github.com/moby/moby/archive/refs/tags/docker-v%{version}.tar.gz
+# Source0-md5:	2b0a2e6e732601b0099c5f06fbb7f359
 Source1:	dockerd.sh
 Source2:	docker.init
 Source3:	docker.sysconfig
@@ -14,6 +14,7 @@ Patch0:		systemd.patch
 URL:		https://www.docker.com/
 BuildRequires:	golang >= 1.21
 BuildRequires:	linux-libc-headers >= 7:4.12
+BuildRequires:	nftables-devel
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.009
 BuildRequires:	systemd-devel
@@ -25,6 +26,7 @@ Requires:	ca-certificates
 Requires:	containerd >= 1.6.22
 Requires:	iproute2 >= 3.5
 Requires:	iptables >= 1.4
+Requires:	nftables
 Requires:	procps
 Requires:	rc-scripts >= 0.4.0.10
 Requires:	systemd-units >= 38
@@ -67,13 +69,12 @@ operation and support of hundreds of thousands of applications and
 databases.
 
 %prep
-%setup -q -n moby-%{version}
+%setup -q -n moby-docker-v%{version}
 %patch -P0 -p1
 
 %build
 export VERSION=%{version}
 export DOCKER_GITCOMMIT="PLD-Linux/%{version}"
-export GO111MODULE=off
 
 AUTO_GOPATH=1 \
 bash -x hack/make.sh dynbinary
@@ -95,9 +96,6 @@ install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/docker
 install -p %{SOURCE1} $RPM_BUILD_ROOT%{_libexecdir}/dockerd
 cp -p %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/docker
 
-# install udev rules
-install -d $RPM_BUILD_ROOT/lib/udev/rules.d
-cp -p contrib/udev/80-docker.rules $RPM_BUILD_ROOT/lib/udev/rules.d
 
 %pre
 %groupadd -g 296 docker
@@ -105,14 +103,14 @@ cp -p contrib/udev/80-docker.rules $RPM_BUILD_ROOT/lib/udev/rules.d
 %post
 /sbin/chkconfig --add docker
 %service -n docker restart
-%systemd_post docker.service
+%systemd_post docker.service docker.socket
 
 %preun
 if [ "$1" = "0" ]; then
 	%service -q docker stop
 	/sbin/chkconfig --del docker
 fi
-%systemd_preun docker.service
+%systemd_preun docker.service docker.socket
 
 %postun
 if [ "$1" = "0" ]; then
@@ -146,7 +144,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/dockerd
 %{systemdunitdir}/docker.service
 %{systemdunitdir}/docker.socket
-/lib/udev/rules.d/80-docker.rules
 
 %dir %attr(700,root,root) /var/lib/docker
 %dir %attr(700,root,root) /var/lib/docker/containers
