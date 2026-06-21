@@ -1,18 +1,18 @@
 Summary:	Docker CE: the open-source application container engine
 Name:		docker-ce
-Version:	29.3.0
+Version:	29.6.0
 Release:	1
 License:	Apache v2.0
 Group:		Applications/System
 # https://github.com/moby/moby/releases
 Source0:	https://github.com/moby/moby/archive/refs/tags/docker-v%{version}.tar.gz
-# Source0-md5:	2b0a2e6e732601b0099c5f06fbb7f359
+# Source0-md5:	645803ee3c80a2c69c29d018dc688930
 Source1:	dockerd.sh
 Source2:	docker.init
 Source3:	docker.sysconfig
 Patch0:		systemd.patch
 URL:		https://www.docker.com/
-BuildRequires:	golang >= 1.21
+BuildRequires:	golang >= 1.25.9
 BuildRequires:	linux-libc-headers >= 7:4.12
 BuildRequires:	nftables-devel
 BuildRequires:	rpm-build >= 4.6
